@@ -10,7 +10,7 @@ const Board = (props) => {
           return (
             <div className="board-row">
               {square.map((array) => {
-                return <Square value={array} />
+                return <Square value={array} onClick={props.onClick} />
               })}
             </div>
           )
