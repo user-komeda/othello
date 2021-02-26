@@ -22,6 +22,7 @@ const App = () => {
   const [blackIsNext, setBlackIsNext] = useState(false)
   const [stepNumber, setStepNumber] = useState(0)
   // console.log(INIT_BOARD)
+  const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
   const handleClick = (event) => {
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = history.history.slice()
@@ -41,7 +42,9 @@ const App = () => {
       <div className="game-board">
         <Board value={history.history[0].square} onClick={handleClick} />
       </div>
-      <div className="game-info"></div>
+      <div className="game-info">
+        <div>{status}</div>
+      </div>
     </div>
   )
 }
