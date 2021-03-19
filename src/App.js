@@ -3,6 +3,7 @@ import Board from './board/Board'
 import INIT_BOARD from './util/initBoard'
 import getClickedIndex from './util/getClickedIndex'
 import check from './util/findIsPutStone'
+import isCheckPutStonePlace from './util/isCheckPutStonePlace'
 import './index.css'
 
 const App = () => {
@@ -33,7 +34,7 @@ const App = () => {
     for (const item of arrayIndex) {
       for (const [index, square] of squares.entries()) {
         if (index === item) {
-          square.classList.add('test')
+          square.id = 'canClick'
         }
       }
     }
@@ -43,19 +44,21 @@ const App = () => {
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
   const handleClick = (event) => {
     const squares = document.querySelectorAll('.square')
-    for (const square of squares) {
-      square.classList.remove('test')
-    }
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = history.history.slice()
     const currant = slicedHistory[slicedHistory.length - 1]
     const square = currant.square
     const index = getClickedIndex(event, squares)
-    const rowIndex = Math.floor(index / 8)
-    const colIndex = index % 8
-    square[rowIndex][colIndex] = stone
-    setHistory({ history: [{ square: square }] })
-    setBlackIsNext(!blackIsNext)
+    if (isCheckPutStonePlace(index, squares)) {
+      for (const square of squares) {
+        square.removeAttribute('id')
+      }
+      const rowIndex = Math.floor(index / 8)
+      const colIndex = index % 8
+      square[rowIndex][colIndex] = stone
+      setHistory({ history: [{ square: square }] })
+      setBlackIsNext(!blackIsNext)
+    }
   }
   return (
     <div className="game">
