@@ -3,7 +3,7 @@ import Square from '../square/Square'
 const Board = (props) => {
   const renderSquare = () => {
     const square = props.value
-    console.log(square)
+    // console.log(square)
     return (
       <>
         {square.map((square) => {
