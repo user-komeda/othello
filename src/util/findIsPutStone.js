@@ -9,13 +9,17 @@ const check = (square, stone) => {
   const hougaku = []
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
-      const tmpHougaku = checkNext(i, j, stone, square)
-      if (tmpHougaku !== null && tmpHougaku.length !== 0) {
-        for (const array of tmpHougaku) {
-          hougaku.push(array)
+      if (square[i][j] === '') {
+        const tmpHougaku = checkNext(i, j, stone, square)
+        if (tmpHougaku !== null && tmpHougaku.length !== 0) {
+          for (const array of tmpHougaku) {
+            hougaku.push(array)
+          }
+          rowIndex.push(i)
+          colIndex.push(j)
         }
-        rowIndex.push(i)
-        colIndex.push(j)
+      } else {
+        continue
       }
     }
   }

@@ -6,12 +6,15 @@ import check from './util/findIsPutStone'
 import isCheckPutStonePlace from './util/isCheckPutStonePlace'
 import checkStoneCount from './util/checkStoneCount'
 import './index.css'
+import checkWinner from './util/checkWinner'
 
 const App = () => {
   const [blackIsNext, setBlackIsNext] = useState(false)
   const [stepNumber, setStepNumber] = useState(0)
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
+  const [flag, setFlag] = useState(true)
+  const [message, setMessage] = useState()
   const [history, setHistory] = useState({
     history: [
       {
@@ -21,14 +24,17 @@ const App = () => {
   })
 
   useEffect(() => {
+    const arrayIndex = []
+    console.log(arrayIndex)
     const stone = blackIsNext ? '○' : '●'
+    console.log(stone)
+    console.log
     const squares = document.querySelectorAll('.square')
 
     const [rowIndex, colIndex, hougaku] = check(
       history.history[0].square,
       stone
     )
-    const arrayIndex = []
     for (const [index, item] of rowIndex.entries()) {
       const rowNum = item * 8
       const colNum = colIndex[index]
@@ -41,14 +47,23 @@ const App = () => {
         }
       }
     }
+    console.log(arrayIndex)
+    console.log(arrayIndex.length)
+    if (arrayIndex.length === 0 && flag === true) {
+      setFlag(false)
+      console.log('insert')
+      setBlackIsNext(!blackIsNext)
+      setMessage(`${stone}スキップされました`)
+      console.log(message)
+    }
     const stoneCount = checkStoneCount()
     setBlackStoneCount(stoneCount[0])
     setWhiteStoneCount(stoneCount[1])
   }, [blackIsNext])
 
-  // console.log(INIT_BOARD)
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
   const handleClick = (event) => {
+    setMessage('')
     const squares = document.querySelectorAll('.square')
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = history.history.slice()
@@ -64,6 +79,7 @@ const App = () => {
       square[rowIndex][colIndex] = stone
       setHistory({ history: [{ square: square }] })
       setBlackIsNext(!blackIsNext)
+      setFlag(true)
     }
   }
   return (
@@ -73,6 +89,7 @@ const App = () => {
       </div>
       <div className="game-info">
         <div>{status}</div>
+        <p>{message}</p>
         <p>黒の石の数:{blackStoneCount}</p>
         <p>白の石の数:{whiteStoneCount}</p>
       </div>
