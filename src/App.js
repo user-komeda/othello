@@ -4,11 +4,14 @@ import INIT_BOARD from './util/initBoard'
 import getClickedIndex from './util/getClickedIndex'
 import check from './util/findIsPutStone'
 import isCheckPutStonePlace from './util/isCheckPutStonePlace'
+import checkStoneCount from './util/checkStoneCount'
 import './index.css'
 
 const App = () => {
   const [blackIsNext, setBlackIsNext] = useState(false)
   const [stepNumber, setStepNumber] = useState(0)
+  const [blackStoneCount, setBlackStoneCount] = useState(0)
+  const [whiteStoneCount, setWhiteStoneCount] = useState(0)
   const [history, setHistory] = useState({
     history: [
       {
@@ -38,6 +41,9 @@ const App = () => {
         }
       }
     }
+    const stoneCount = checkStoneCount()
+    setBlackStoneCount(stoneCount[0])
+    setWhiteStoneCount(stoneCount[1])
   }, [blackIsNext])
 
   // console.log(INIT_BOARD)
@@ -67,6 +73,8 @@ const App = () => {
       </div>
       <div className="game-info">
         <div>{status}</div>
+        <p>黒の石の数:{blackStoneCount}</p>
+        <p>白の石の数:{whiteStoneCount}</p>
       </div>
     </div>
   )
