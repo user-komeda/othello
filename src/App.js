@@ -13,8 +13,10 @@ const App = () => {
   const [stepNumber, setStepNumber] = useState(0)
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
+  const [skipCount, setSkipCount] = useState(0)
   const [flag, setFlag] = useState(true)
   const [message, setMessage] = useState()
+  const [winner, setWinner] = useState('')
   const [history, setHistory] = useState({
     history: [
       {
@@ -28,7 +30,7 @@ const App = () => {
     console.log(arrayIndex)
     const stone = blackIsNext ? '○' : '●'
     console.log(stone)
-    console.log
+    // console.log
     const squares = document.querySelectorAll('.square')
 
     const [rowIndex, colIndex, hougaku] = check(
@@ -47,6 +49,9 @@ const App = () => {
         }
       }
     }
+    if (flag === false && arrayIndex.length === 0) {
+      setWinner(checkWinner(blackStoneCount, whiteStoneCount))
+    }
     console.log(arrayIndex)
     console.log(arrayIndex.length)
     if (arrayIndex.length === 0 && flag === true) {
@@ -55,6 +60,7 @@ const App = () => {
       setBlackIsNext(!blackIsNext)
       setMessage(`${stone}スキップされました`)
       console.log(message)
+      setSkipCount(1)
     }
     const stoneCount = checkStoneCount()
     setBlackStoneCount(stoneCount[0])
@@ -63,6 +69,7 @@ const App = () => {
 
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
   const handleClick = (event) => {
+    console.log(skipCount)
     setMessage('')
     const squares = document.querySelectorAll('.square')
     const stone = blackIsNext ? '○' : '●'
@@ -71,6 +78,8 @@ const App = () => {
     const square = currant.square
     const index = getClickedIndex(event, squares)
     if (isCheckPutStonePlace(index, squares)) {
+      setSkipCount(0)
+      setWinner('')
       for (const square of squares) {
         square.removeAttribute('id')
       }
@@ -92,6 +101,7 @@ const App = () => {
         <p>{message}</p>
         <p>黒の石の数:{blackStoneCount}</p>
         <p>白の石の数:{whiteStoneCount}</p>
+        <p>{winner}</p>
       </div>
     </div>
   )
