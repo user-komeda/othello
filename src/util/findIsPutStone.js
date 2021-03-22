@@ -41,8 +41,8 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
         rowIndex + i < 0 ||
         rowIndex + i > 7 ||
         colIndex + j < 0 ||
-        colIndex + j > 7 ||
-        rowIndex === colIndex
+        colIndex + j > 7
+        // rowIndex === colIndex
       ) {
         continue
       }
@@ -58,6 +58,7 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
       if (getCheckedStone(stone, i, j, square, rowIndex, colIndex)) {
         const index = checkHougaku(i, j)
         hougaku.push(index)
+        console.log(hougaku)
       }
     }
   }
@@ -76,17 +77,23 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
 
 const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
   const array = []
-  let count = 0
+  let ix = i
+  let jx = j
+  console.log(i, j)
+
   while (
-    rowIndex + i >= 0 &&
-    rowIndex + i <= 7 &&
-    colIndex + j >= 0 &&
-    colIndex + j <= 7
+    rowIndex + ix >= 0 &&
+    rowIndex + ix <= 7 &&
+    colIndex + jx >= 0 &&
+    colIndex + jx <= 7
   ) {
-    array.push(square[rowIndex + i][colIndex + j])
-    i += i
-    j += j
-    count++
+    console.log(rowIndex, colIndex)
+    console.log(square)
+    // console.log(rowIndex + ix, colIndex + jx)
+    array.push(square[rowIndex + ix][colIndex + jx])
+    console.log(array)
+    ix += i
+    jx += j
   }
   return checkArrayStone(array, stone)
 }
@@ -98,24 +105,41 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
  * @param {String} stone
  */
 const checkArrayStone = (array, stone) => {
-  const firstIndex = array.indexOf(stone)
+  // console.log
+  const filteredArray = array
+  console.log(filteredArray)
+  const firstIndex = filteredArray.indexOf(stone)
+  console.log(firstIndex)
   let flag = true
   if (firstIndex !== -1) {
-    for (let i = 0; i < array.length; i++) {
+    empty: for (let i = 0; i < filteredArray.length; i++) {
+      console.log(i)
       if (i === 0 || i === firstIndex) {
+        // console.log(i)
         continue
       }
-      if (array[i] === stone) {
-        flag = false
+      if (filteredArray[i] !== stone && filteredArray[i] !== '') {
+        for (let index = 1; index < i; index++) {
+          if (filteredArray[index] === '') {
+            console.log('aaa')
+            flag = false
+            break empty
+          }
+        }
+        flag = true
+        console.log('bbb')
         break
       }
     }
     if (flag === true) {
+      console.log('true')
       return true
     } else {
+      console.log('false')
       return false
     }
   } else {
+    console.log('faire２')
     return false
   }
 }
