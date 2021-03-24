@@ -7,8 +7,12 @@ import isCheckPutStonePlace from './util/isCheckPutStonePlace'
 import checkStoneCount from './util/checkStoneCount'
 import './index.css'
 import checkWinner from './util/checkWinner'
+import reverseStone from './util/reverseStone'
 
 const App = () => {
+  const [rowIndex, setRowIndex] = useState()
+  const [colIndex, setColIndex] = useState()
+  const [hougaku, setHougaku] = useState()
   const [blackIsNext, setBlackIsNext] = useState(false)
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
@@ -18,9 +22,9 @@ const App = () => {
   const [history, setHistory] = useState({
     history: [
       {
-        square: INIT_BOARD,
-      },
-    ],
+        square: INIT_BOARD
+      }
+    ]
   })
 
   useEffect(() => {
@@ -57,11 +61,18 @@ const App = () => {
     const stoneCount = checkStoneCount()
     setBlackStoneCount(stoneCount[0])
     setWhiteStoneCount(stoneCount[1])
+    setRowIndex(rowIndex)
+    setColIndex(colIndex)
+    setHougaku(hougaku)
     // eslint-disable-next-line
   }, [blackIsNext])
 
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
-  const handleClick = (event) => {
+  const handleClick = event => {
+    console.log(hougaku)
+    console.log(rowIndex)
+    console.log(colIndex)
+
     setMessage('')
     const squares = document.querySelectorAll('.square')
     const stone = blackIsNext ? '○' : '●'
@@ -74,20 +85,28 @@ const App = () => {
       for (const square of squares) {
         square.removeAttribute('id')
       }
-      const rowIndex = Math.floor(index / 8)
-      const colIndex = index % 8
-      square[rowIndex][colIndex] = stone
-      setHistory({ history: [{ square: square }] })
+      const clickedRowIndex = Math.floor(index / 8)
+      const clickedColIndex = index % 8
+      const changedSquare = reverseStone(
+        clickedRowIndex,
+        clickedColIndex,
+        hougaku,
+        rowIndex,
+        colIndex,
+        square,
+        stone
+      )
+      setHistory({ history: [{ square: changedSquare }] })
       setBlackIsNext(!blackIsNext)
       setFlag(true)
     }
   }
   return (
-    <div className="game">
-      <div className="game-board">
+    <div className='game'>
+      <div className='game-board'>
         <Board value={history.history[0].square} onClick={handleClick} />
       </div>
-      <div className="game-info">
+      <div className='game-info'>
         <div>{status}</div>
         <p>{message}</p>
         <p>黒の石の数:{blackStoneCount}</p>

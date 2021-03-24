@@ -12,9 +12,10 @@ const check = (square, stone) => {
       if (square[i][j] === '') {
         const tmpHougaku = checkNext(i, j, stone, square)
         if (tmpHougaku !== null && tmpHougaku.length !== 0) {
-          for (const array of tmpHougaku) {
-            hougaku.push(array)
-          }
+          // for (const array of tmpHougaku) {
+          //   hougaku.push(array)
+          // }
+          hougaku.push(tmpHougaku)
           rowIndex.push(i)
           colIndex.push(j)
         }
@@ -58,7 +59,7 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
       if (getCheckedStone(stone, i, j, square, rowIndex, colIndex)) {
         const index = checkHougaku(i, j)
         hougaku.push(index)
-        console.log(hougaku)
+        // console.log(hougaku)
       }
     }
   }
@@ -79,7 +80,7 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
   const array = []
   let ix = i
   let jx = j
-  console.log(i, j)
+  // console.log(i, j)
 
   while (
     rowIndex + ix >= 0 &&
@@ -87,11 +88,11 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
     colIndex + jx >= 0 &&
     colIndex + jx <= 7
   ) {
-    console.log(rowIndex, colIndex)
-    console.log(square)
+    // console.log(rowIndex, colIndex)
+    // console.log(square)
     // console.log(rowIndex + ix, colIndex + jx)
     array.push(square[rowIndex + ix][colIndex + jx])
-    console.log(array)
+    // console.log(array)
     ix += i
     jx += j
   }
@@ -107,13 +108,13 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
 const checkArrayStone = (array, stone) => {
   // console.log
   const filteredArray = array
-  console.log(filteredArray)
+  // console.log(filteredArray)
   const firstIndex = filteredArray.indexOf(stone)
-  console.log(firstIndex)
+  // console.log(firstIndex)
   let flag = true
   if (firstIndex !== -1) {
     empty: for (let i = 0; i < filteredArray.length; i++) {
-      console.log(i)
+      // console.log(i)
       if (i === 0 || i === firstIndex) {
         // console.log(i)
         continue
@@ -127,19 +128,19 @@ const checkArrayStone = (array, stone) => {
           }
         }
         flag = true
-        console.log('bbb')
+        // console.log('bbb')
         break
       }
     }
     if (flag === true) {
-      console.log('true')
+      // console.log('true')
       return true
     } else {
-      console.log('false')
+      // console.log('false')
       return false
     }
   } else {
-    console.log('faire２')
+    // console.log('faire２')
     return false
   }
 }
