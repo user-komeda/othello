@@ -34,8 +34,6 @@ const App = () => {
       square.removeAttribute('id')
     }
 
-    console.log(history)
-    console.log(stepNumber)
     const arrayIndex = []
     const stone = blackIsNext ? '○' : '●'
     // eslint-disable-next-line
@@ -78,7 +76,6 @@ const App = () => {
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
   const handleClick = event => {
     setMessage('')
-    console.log(stepNumber)
     const squares = document.querySelectorAll('.square')
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = JSON.parse(
@@ -109,27 +106,35 @@ const App = () => {
         stone
       )
       // console.log(changedSquare)
-      console.log(history)
       setHistory({ history: slicedHistory.concat([{ square: changedSquare }]) })
       setBlackIsNext(!blackIsNext)
       setFlag(true)
-      setStepNumber(history.history.length)
+      setStepNumber(slicedHistory.length)
     }
   }
 
   const jump = () => {
-    const step = stepNumber - 1
-    setStepNumber(step)
-    setBlackIsNext(stepNumber % 2 === 0)
+    let step = stepNumber - 1
+    if (step < 0) {
+      return
+    }
+    if (message !== '') {
+      let step = stepNumber - 2
+      setStepNumber(step)
+      setBlackIsNext(!blackIsNext)
+      setMessage('')
+    } else {
+      setStepNumber(step)
+      setBlackIsNext(stepNumber % 2 === 0)
+      setMessage('')
+    }
   }
 
   return (
     <div className='game'>
       <div className='game-board'>
-        {console.log(stepNumber)}
-        {console.log(history.history)}
         <Board
-          value={history.history[stepNumber - 1].square}
+          value={history.history[stepNumber].square}
           onClick={handleClick}
         />
       </div>
