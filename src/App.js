@@ -63,7 +63,7 @@ const App = () => {
       setBlackIsNext(!blackIsNext)
       setMessage(`${stone}スキップされました`)
     }
-    const stoneCount = checkStoneCount()
+    const stoneCount = checkStoneCount(history.history[stepNumber].square)
     setBlackStoneCount(stoneCount[0])
     setWhiteStoneCount(stoneCount[1])
     setRowIndex(rowIndex)
