@@ -1,16 +1,17 @@
-const checkStoneCount = () => {
-  const squares = document.querySelectorAll('.square')
+const checkStoneCount = squares => {
   let blackStoneCount = 0
   let whiteStoneCount = 0
-  for (const square of squares) {
-    if (square.textContent === '●') {
+  const flatSquares = squares.reduce((pre, current) => {
+    pre.push(...current)
+    return pre
+  }, [])
+  for (let flatSquare of flatSquares) {
+    if (flatSquare === '●') {
       blackStoneCount++
-    } else if (square.textContent === '○') {
+    } else if (flatSquare === '○') {
       whiteStoneCount++
-    } else {
-      continue
     }
   }
-  return [blackStoneCount, whiteStoneCount]
+  return [blackStoneCount,whiteStoneCount]
 }
 export default checkStoneCount
