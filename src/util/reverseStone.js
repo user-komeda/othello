@@ -38,7 +38,6 @@ const reverseStone = (
   for (const val of checkedHougaku) {
     let rowChange = 0
     let colChange = 0
-    console.log(val)
     let [rowIndexChange, colIndexChange] = convertHougaku(val)
     const array = checkReverse(
       rowIndexChange,
@@ -48,7 +47,6 @@ const reverseStone = (
       square,
       stone
     )
-    console.log(array)
     for (const _ of array) {
       square[clickedRowIndex + rowChange][clickedColIndex + colChange] = stone
       rowChange += rowIndexChange
@@ -121,7 +119,6 @@ const checkReverse = (
     clickedColIndex + colChange <= 7
   ) {
     array.push(square[clickedRowIndex + rowChange][clickedColIndex + colChange])
-    console.log(array)
     rowChange += rowIndexChange
     colChange += colIndexChange
   }
@@ -130,8 +127,10 @@ const checkReverse = (
     array.length = index + 1
     array.unshift(stone)
   }
+  // 複数方向にひっくり返せる場合先頭にstoneが来ることはあり得る
   if (index === 0) {
-    array.length = array.lastIndexOf(stone) + 1
+    const nextIndex = array.indexOf(stone, 1)
+    array.length = nextIndex + 1
   }
 
   return array.filter(val => {
