@@ -1,6 +1,7 @@
 const checkStoneCount = squares => {
   let blackStoneCount = 0
   let whiteStoneCount = 0
+
   const flatSquares = squares.reduce((pre, current) => {
     pre.push(...current)
     return pre
@@ -12,6 +13,6 @@ const checkStoneCount = squares => {
       whiteStoneCount++
     }
   }
-  return [blackStoneCount,whiteStoneCount]
+  return [blackStoneCount, whiteStoneCount]
 }
 export default checkStoneCount

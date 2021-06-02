@@ -12,9 +12,6 @@ const check = (square, stone) => {
       if (square[i][j] === '') {
         const tmpHougaku = checkNext(i, j, stone, square)
         if (tmpHougaku !== null && tmpHougaku.length !== 0) {
-          // for (const array of tmpHougaku) {
-          //   hougaku.push(array)
-          // }
           hougaku.push(tmpHougaku)
           rowIndex.push(i)
           colIndex.push(j)
@@ -43,7 +40,6 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
         rowIndex + i > 7 ||
         colIndex + j < 0 ||
         colIndex + j > 7
-        // rowIndex === colIndex
       ) {
         continue
       }
@@ -59,7 +55,6 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
       if (getCheckedStone(stone, i, j, square, rowIndex, colIndex)) {
         const index = checkHougaku(i, j)
         hougaku.push(index)
-        // console.log(hougaku)
       }
     }
   }
@@ -80,7 +75,6 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
   const array = []
   let ix = i
   let jx = j
-  // console.log(i, j)
 
   while (
     rowIndex + ix >= 0 &&
@@ -88,11 +82,7 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
     colIndex + jx >= 0 &&
     colIndex + jx <= 7
   ) {
-    // console.log(rowIndex, colIndex)
-    // console.log(square)
-    // console.log(rowIndex + ix, colIndex + jx)
     array.push(square[rowIndex + ix][colIndex + jx])
-    // console.log(array)
     ix += i
     jx += j
   }
@@ -106,41 +96,28 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
  * @param {String} stone
  */
 const checkArrayStone = (array, stone) => {
-  // console.log
   const filteredArray = array
-  // console.log(filteredArray)
   const firstIndex = filteredArray.indexOf(stone)
-  // console.log(firstIndex)
+  if (firstIndex === 1) {
+    return true
+  }
   let flag = true
   if (firstIndex !== -1) {
-    empty: for (let i = 0; i < filteredArray.length; i++) {
-      // console.log(i)
-      if (i === 0 || i === firstIndex) {
-        // console.log(i)
-        continue
-      }
-      if (filteredArray[i] !== stone && filteredArray[i] !== '') {
-        for (let index = 1; index < i; index++) {
-          if (filteredArray[index] === '') {
-            console.log('aaa')
-            flag = false
-            break empty
-          }
-        }
-        flag = true
-        // console.log('bbb')
-        break
+    filteredArray.length = firstIndex
+    for (let i = 0; i < filteredArray.length; i++) {
+      if (filteredArray[i] === '') {
+        return false
       }
     }
+
     if (flag === true) {
-      // console.log('true')
+      console.log('true')
       return true
     } else {
-      // console.log('false')
+      console.log('false')
       return false
     }
   } else {
-    // console.log('faire２')
     return false
   }
 }
@@ -148,7 +125,7 @@ const checkArrayStone = (array, stone) => {
 /**
  * 石が置ける方角を調べる
  * @param {int} i 行方向への増加量
- * @param {itn} j 列方向への増加量
+ * @param {int} j 列方向への増加量
  */
 const checkHougaku = (i, j) => {
   switch (i) {
