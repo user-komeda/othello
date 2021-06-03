@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import Board from './board/Board'
 import INIT_BOARD from './util/initBoard'
 import getClickedIndex from './util/getClickedIndex'
@@ -8,8 +8,12 @@ import checkStoneCount from './util/checkStoneCount'
 import './index.css'
 import checkWinner from './util/checkWinner'
 import reverseStone from './util/reverseStone'
+import addAnimationId from './util/addAnimationId'
 
 const App = () => {
+  const test = () => {
+    return document.querySelectorAll('.square')
+  }
   const [rowIndex, setRowIndex] = useState()
   const [colIndex, setColIndex] = useState()
   const [hougaku, setHougaku] = useState()
@@ -19,6 +23,7 @@ const App = () => {
   const [flag, setFlag] = useState(true)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
+  const [squaresDom, setSquaresDom] = useReducer(test, null)
   const [stepNumber, setStepNumber] = useState(0)
   const [history, setHistory] = useState({
     history: [
@@ -29,11 +34,11 @@ const App = () => {
   })
 
   useEffect(() => {
-    const squares = document.querySelectorAll('.square')
-    for (const square of squares) {
-      square.removeAttribute('id')
+    if (squaresDom) {
+      for (const squareDom of squaresDom) {
+        squareDom.removeAttribute('id')
+      }
     }
-
     const arrayIndex = []
     const stone = blackIsNext ? '○' : '●'
     // eslint-disable-next-line
@@ -47,10 +52,21 @@ const App = () => {
       const colNum = colIndex[index]
       arrayIndex.push(rowNum + colNum)
     }
-    for (const item of arrayIndex) {
-      for (const [index, square] of squares.entries()) {
-        if (index === item) {
-          square.id = 'canClick'
+    if (squaresDom) {
+      for (const item of arrayIndex) {
+        for (const [index, squareDom] of squaresDom.entries()) {
+          if (index === item) {
+            squareDom.id = 'canClick'
+          }
+        }
+      }
+    } else {
+      const squaresDom = document.querySelectorAll('.square')
+      for (const item of arrayIndex) {
+        for (const [index, squareDom] of squaresDom.entries()) {
+          if (index === item) {
+            squareDom.id = 'canClick'
+          }
         }
       }
     }
@@ -69,11 +85,14 @@ const App = () => {
     setRowIndex(rowIndex)
     setColIndex(colIndex)
     setHougaku(hougaku)
+    setSquaresDom(document.querySelectorAll('.square'))
     // setStepNumber(history.length)
     // eslint-disable-next-line
+    // setSquaresDom(document.querySelectorAll('.square'))
   }, [blackIsNext])
 
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
+
   const handleClick = event => {
     setMessage('')
     const squares = document.querySelectorAll('.square')
@@ -91,12 +110,9 @@ const App = () => {
     const index = getClickedIndex(event, squares)
     if (isCheckPutStonePlace(index, squares)) {
       setWinner('')
-      for (const square of squares) {
-        square.removeAttribute('id')
-      }
       const clickedRowIndex = Math.floor(index / 8)
       const clickedColIndex = index % 8
-      const changedSquare = reverseStone(
+      const changedSquares = reverseStone(
         clickedRowIndex,
         clickedColIndex,
         hougaku,
@@ -105,8 +121,19 @@ const App = () => {
         square,
         stone
       )
-      // console.log(changedSquare)
-      setHistory({ history: slicedHistory.concat([{ square: changedSquare }]) })
+      const reverseIndexes = addAnimationId(
+        stone,
+        history.history[stepNumber].square,
+        changedSquares
+      )
+      // console.log(history.history[stepNumber].square)
+      for (const reverseIndex of reverseIndexes) {
+        console.log(squaresDom[reverseIndex])
+        squaresDom[reverseIndex].id = 'reverse'
+      }
+      setHistory({
+        history: slicedHistory.concat([{ square: changedSquares }])
+      })
       setBlackIsNext(!blackIsNext)
       setFlag(true)
       setStepNumber(slicedHistory.length)
