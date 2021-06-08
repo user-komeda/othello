@@ -1,23 +1,31 @@
 import React from 'react'
 import Square from '../square/Square'
 const Board = props => {
-  const renderSquare = () => {
-    const square = props.value
-    // console.log(square)
-    return (
-      <>
-        {square.map(square => {
-          return (
-            <div className='board-row'>
-              {square.map(array => {
-                return <Square value={array} onClick={props.onClick} />
-              })}
-            </div>
-          )
-        })}
-      </>
-    )
-  }
-  return renderSquare()
+  const square = props.value
+  // console.log(square)
+  return (
+    <>
+      {square.map((square, rowIndex) => {
+        return (
+          <div className='board-row'>
+            {square.map((array, colIndex) => {
+              return (
+                <Square
+                  value={array}
+                  onClick={props.onClick}
+                  count={props.count}
+                  className={
+                    props.reverseIndex.includes(rowIndex * 8 + colIndex)
+                      ? 'reverse'
+                      : ''
+                  }
+                />
+              )
+            })}
+          </div>
+        )
+      })}
+    </>
+  )
 }
 export default Board

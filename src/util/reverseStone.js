@@ -10,6 +10,8 @@ const reverseStone = (
   stone
 ) => {
   const index = rowIndex.indexOf(clickedRowIndex)
+  const notReverseStone = JSON.parse(JSON.stringify(square))
+  notReverseStone[clickedRowIndex][clickedColIndex] = stone
   const rowIndexMatch = []
   rowIndex.map((val, index) => {
     if (val === clickedRowIndex) {
@@ -53,7 +55,8 @@ const reverseStone = (
       colChange += colIndexChange
     }
   }
-  return square
+  // console.log(array, square)
+  return [square, notReverseStone]
 }
 
 const convertHougaku = hougaku => {

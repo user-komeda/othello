@@ -21,10 +21,21 @@ const App = () => {
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
   const [flag, setFlag] = useState(true)
+  const [removeFlag, setRemoveFlag] = useState(false)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
+  const [count, setCount] = useState(0)
   const [squaresDom, setSquaresDom] = useReducer(test, null)
   const [stepNumber, setStepNumber] = useState(0)
+  const [notReverseHistory, setNotReverseHistory] = useState({
+    notReverseHistory: [
+      {
+        notReverseSquare: INIT_BOARD
+      }
+    ]
+  })
+
+  const [reverseIndex, setReverseIndex] = useState([])
   const [history, setHistory] = useState({
     history: [
       {
@@ -34,10 +45,37 @@ const App = () => {
   })
 
   useEffect(() => {
+    const element = test()
+    let removeflag = false
+    for (const elm of element) {
+      elm.addEventListener('transitionend', event => {
+        // console.log(event.target.parentNode
+        // setRemoveFlag(true)
+        let cout = 0
+        if (/test/.test(event.target.parentNode.className)) {
+          setTimeout(() => {
+            event.target.parentNode.children[1].classList.add('none')
+            event.target.parentNode.classList.remove('test')
+            console.log('set')
+            event.target.parentNode.classList.remove('reverse')
+            console.log('end')
+          }, 800)
+        }
+      })
+    }
+  }, [])
+  useEffect(() => {
     if (squaresDom) {
-      for (const squareDom of squaresDom) {
-        squareDom.removeAttribute('id')
-      }
+      // squareDom.addEventListener(new CustomEvent('customEvent'), event => {
+      //   console.log('hakka')
+      // })
+      // for (const squareDom of squaresDom) {
+      //   squareDom.removeAttribute('id')
+      //   if (/test/.test(squareDom.className)) {
+      //     // squareDom.children[1].style = 'z-index:9999'
+      //     squareDom.classList.remove('test')
+      //   }
+      // }
     }
     const arrayIndex = []
     const stone = blackIsNext ? '○' : '●'
@@ -85,8 +123,9 @@ const App = () => {
     setRowIndex(rowIndex)
     setColIndex(colIndex)
     setHougaku(hougaku)
-    setSquaresDom(document.querySelectorAll('.square'))
+    setSquaresDom()
     // setStepNumber(history.length)
+    // console.log(stepNumber)
     // eslint-disable-next-line
     // setSquaresDom(document.querySelectorAll('.square'))
   }, [blackIsNext])
@@ -94,11 +133,28 @@ const App = () => {
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
 
   const handleClick = event => {
-    setMessage('')
-    const squares = document.querySelectorAll('.square')
+    // if (squaresDom) {
+    for (const squareDom of squaresDom) {
+      console.log('aaa')
+      if (/reverse/.test(squareDom.className)) {
+        // squareDom.children[1].style = 'z-index:9999'
+        // squareDom.classList.remove('test')
+        // console.log('remove')
+      }
+      // squareDom.removeAttribute('id')
+    }
+    // }
+
+    // setMessage('')
+    // const squares = document.querySelectorAll('.square')
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = JSON.parse(
       JSON.stringify(history.history.slice(0, stepNumber + 1))
+    )
+    const notReverseSlicedHistory = JSON.parse(
+      JSON.stringify(
+        notReverseHistory.notReverseHistory.slice(0, stepNumber + 1)
+      )
     )
     // console.log(slicedHistory)
     const currant = JSON.parse(
@@ -107,12 +163,13 @@ const App = () => {
     // console.log(currant)
     const square = JSON.parse(JSON.stringify(currant.square.slice()))
     // console.log(square)
-    const index = getClickedIndex(event, squares)
-    if (isCheckPutStonePlace(index, squares)) {
+    const index = getClickedIndex(event, squaresDom)
+    if (isCheckPutStonePlace(index, squaresDom)) {
+      setCount(count + 1)
       setWinner('')
       const clickedRowIndex = Math.floor(index / 8)
       const clickedColIndex = index % 8
-      const changedSquares = reverseStone(
+      const [changedSquares, notReverseSquare] = reverseStone(
         clickedRowIndex,
         clickedColIndex,
         hougaku,
@@ -126,17 +183,24 @@ const App = () => {
         history.history[stepNumber].square,
         changedSquares
       )
+
       // console.log(history.history[stepNumber].square)
-      for (const reverseIndex of reverseIndexes) {
-        console.log(squaresDom[reverseIndex])
-        squaresDom[reverseIndex].id = 'reverse'
-      }
       setHistory({
         history: slicedHistory.concat([{ square: changedSquares }])
       })
+      setNotReverseHistory({
+        notReverseHistory: notReverseSlicedHistory.concat([
+          { notReverseSquare: notReverseSquare }
+        ])
+      })
+      setReverseIndex(reverseIndexes)
+      // console.log(reverseIndex)
       setBlackIsNext(!blackIsNext)
       setFlag(true)
       setStepNumber(slicedHistory.length)
+      setRemoveFlag(false)
+    } else {
+      console.log('faire')
     }
   }
 
@@ -159,10 +223,16 @@ const App = () => {
 
   return (
     <div className='game'>
+      {/* {console.log(console./log(stepNumber))} */}
       <div className='game-board'>
         <Board
-          value={history.history[stepNumber].square}
+          value={
+            notReverseHistory.notReverseHistory[stepNumber].notReverseSquare
+          }
           onClick={handleClick}
+          // これがないとクラスが変更されないため必須
+          count={count}
+          reverseIndex={reverseIndex}
         />
       </div>
       <div className='game-info'>
