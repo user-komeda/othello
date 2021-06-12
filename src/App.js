@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import Board from './board/Board'
 import INIT_BOARD from './util/initBoard'
 import getClickedIndex from './util/getClickedIndex'
@@ -8,8 +8,17 @@ import checkStoneCount from './util/checkStoneCount'
 import './index.css'
 import checkWinner from './util/checkWinner'
 import reverseStone from './util/reverseStone'
+import addAnimationId from './util/addAnimationId'
+import getDom from './util/getDom'
 
 const App = () => {
+  const test = (state, selector) => {
+    if (state === undefined) {
+      return
+    } else {
+      return state.concat(getDom(selector))
+    }
+  }
   const [rowIndex, setRowIndex] = useState()
   const [colIndex, setColIndex] = useState()
   const [hougaku, setHougaku] = useState()
@@ -17,9 +26,22 @@ const App = () => {
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
   const [flag, setFlag] = useState(true)
+  const [removeFlag, setRemoveFlag] = useState(false)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
+  const [count, setCount] = useState(0)
+  const [squaresDom, setSquaresDom] = useReducer(test, [])
   const [stepNumber, setStepNumber] = useState(0)
+  const [jumpFlag, setJumpFlag] = useState(false)
+  const [notReverseHistory, setNotReverseHistory] = useState({
+    notReverseHistory: [
+      {
+        notReverseSquare: INIT_BOARD
+      }
+    ]
+  })
+
+  const [reverseIndex, setReverseIndex] = useState([])
   const [history, setHistory] = useState({
     history: [
       {
@@ -29,28 +51,47 @@ const App = () => {
   })
 
   useEffect(() => {
-    const squares = document.querySelectorAll('.square')
-    for (const square of squares) {
-      square.removeAttribute('id')
+    const element = getDom('.square')
+    for (const elm of element) {
+      elm.addEventListener('transitionend', event => {
+        if (/test/.test(event.target.parentNode.className)) {
+          setTimeout(() => {
+            console.log(jumpFlag)
+            event.target.parentNode.children[1].classList.add('none')
+            event.target.parentNode.classList.remove('test')
+            event.target.parentNode.classList.remove('reverse')
+          }, 800)
+        }
+      })
     }
-
+  }, [])
+  useEffect(() => {
     const arrayIndex = []
     const stone = blackIsNext ? '○' : '●'
-    // eslint-disable-next-line
     const [rowIndex, colIndex, hougaku] = check(
       history.history[stepNumber].square,
       stone
     )
-
     for (const [index, item] of rowIndex.entries()) {
       const rowNum = item * 8
       const colNum = colIndex[index]
       arrayIndex.push(rowNum + colNum)
     }
-    for (const item of arrayIndex) {
-      for (const [index, square] of squares.entries()) {
-        if (index === item) {
-          square.id = 'canClick'
+    if (squaresDom[stepNumber - 1]) {
+      for (const item of arrayIndex) {
+        for (const [index, squareDom] of squaresDom[stepNumber - 1].entries()) {
+          if (index === item) {
+            squareDom.id = 'canClick'
+          }
+        }
+      }
+    } else {
+      const squaresDom = getDom('.square')
+      for (const item of arrayIndex) {
+        for (const [index, squareDom] of squaresDom.entries()) {
+          if (index === item) {
+            squareDom.id = 'canClick'
+          }
         }
       }
     }
@@ -69,34 +110,34 @@ const App = () => {
     setRowIndex(rowIndex)
     setColIndex(colIndex)
     setHougaku(hougaku)
-    // setStepNumber(history.length)
-    // eslint-disable-next-line
+    setSquaresDom('.square')
   }, [blackIsNext])
 
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
+
   const handleClick = event => {
     setMessage('')
-    const squares = document.querySelectorAll('.square')
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = JSON.parse(
       JSON.stringify(history.history.slice(0, stepNumber + 1))
     )
-    // console.log(slicedHistory)
+    const notReverseSlicedHistory = JSON.parse(
+      JSON.stringify(
+        notReverseHistory.notReverseHistory.slice(0, stepNumber + 1)
+      )
+    )
     const currant = JSON.parse(
       JSON.stringify(slicedHistory[slicedHistory.length - 1])
     )
-    // console.log(currant)
     const square = JSON.parse(JSON.stringify(currant.square.slice()))
-    // console.log(square)
-    const index = getClickedIndex(event, squares)
-    if (isCheckPutStonePlace(index, squares)) {
+    const index = getClickedIndex(event, squaresDom[stepNumber])
+    if (isCheckPutStonePlace(index, squaresDom[stepNumber])) {
+      setCount(count + 1)
       setWinner('')
-      for (const square of squares) {
-        square.removeAttribute('id')
-      }
+      setJumpFlag(false)
       const clickedRowIndex = Math.floor(index / 8)
       const clickedColIndex = index % 8
-      const changedSquare = reverseStone(
+      const [changedSquares, notReverseSquare] = reverseStone(
         clickedRowIndex,
         clickedColIndex,
         hougaku,
@@ -105,11 +146,28 @@ const App = () => {
         square,
         stone
       )
-      // console.log(changedSquare)
-      setHistory({ history: slicedHistory.concat([{ square: changedSquare }]) })
+      const reverseIndexes = addAnimationId(
+        stone,
+        history.history[stepNumber].square,
+        changedSquares
+      )
+
+      setHistory({
+        history: slicedHistory.concat([{ square: changedSquares }])
+      })
+      setNotReverseHistory({
+        notReverseHistory: notReverseSlicedHistory.concat([
+          { notReverseSquare: notReverseSquare }
+        ])
+      })
+      setReverseIndex(reverseIndexes)
       setBlackIsNext(!blackIsNext)
       setFlag(true)
       setStepNumber(slicedHistory.length)
+      setRemoveFlag(false)
+      for (const squareDom of squaresDom[stepNumber]) {
+        squareDom.removeAttribute('id')
+      }
     }
   }
 
@@ -118,6 +176,8 @@ const App = () => {
     if (step < 0) {
       return
     }
+    setJumpFlag(true)
+    setCount(count + 1)
     if (message !== '') {
       let step = stepNumber - 2
       setStepNumber(step)
@@ -128,14 +188,25 @@ const App = () => {
       setBlackIsNext(stepNumber % 2 === 0)
       setMessage('')
     }
+    for (const squareDom of squaresDom[stepNumber]) {
+      squareDom.removeAttribute('id')
+    }
   }
 
   return (
     <div className='game'>
       <div className='game-board'>
         <Board
-          value={history.history[stepNumber].square}
+          value={
+            jumpFlag
+              ? history.history[stepNumber].square
+              : notReverseHistory.notReverseHistory[stepNumber].notReverseSquare
+          }
           onClick={handleClick}
+          count={count}
+          reverseIndex={reverseIndex}
+          flag={jumpFlag}
+          blackIsNext={blackIsNext}
         />
       </div>
       <div className='game-info'>
