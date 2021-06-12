@@ -111,10 +111,8 @@ const checkArrayStone = (array, stone) => {
     }
 
     if (flag === true) {
-      console.log('true')
       return true
     } else {
-      console.log('false')
       return false
     }
   } else {

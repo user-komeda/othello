@@ -14,6 +14,8 @@ const Board = props => {
                   value={array}
                   onClick={props.onClick}
                   count={props.count}
+                  flag={props.flag}
+                  blackIsNext={props.blackIsNext}
                   className={
                     props.reverseIndex.includes(rowIndex * 8 + colIndex)
                       ? 'reverse'
