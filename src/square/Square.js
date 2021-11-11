@@ -25,7 +25,6 @@ const Square = props => {
         case '○':
           switch (props.value) {
             case '○':
-              console.log(element.current)
               if (/pink/.test(frontImgSrc)) {
                 element.current.children[1].classList.remove('none')
               } else if (/blue/.test(frontImgSrc)) {
@@ -40,7 +39,6 @@ const Square = props => {
           }
           break
         case '●':
-          console.log('black')
           switch (props.value) {
             case '○':
               element.current.children[1].classList.remove('none')
@@ -60,12 +58,19 @@ const Square = props => {
           break
       }
     } else {
+      if (element.current.children[1].classList.contains('none')) {
+        if (/none/.test(element.current.children[1].classList[1])) {
+          element.current.children[1].classList.add('transition_none')
+        } else {
+          console.log(element.current.children[1].classList[0])
+        }
+      }
       element.current.children[1].classList.remove('none')
       if (/reverse/.test(props.className)) {
         element.current.classList.add('test')
         setTimeout(() => {
           element.current.classList.add(props.className)
-        }, 500)
+        }, 200)
       }
     }
   }, [props.count])
