@@ -31,6 +31,8 @@ const Game = ({ route, navigation }) => {
   const [colIndex, setColIndex] = useState()
   const [hougaku, setHougaku] = useState()
   const [blackIsNext, setBlackIsNext] = useState(false)
+  const [myStoneColor, setMyStoneColor] = useState()
+  // const [status, setStatus] = useState()
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
   const [flag, setFlag] = useState(true)
@@ -60,18 +62,38 @@ const Game = ({ route, navigation }) => {
 
   useEffect(() => {
     console.log('render')
-    socketRef.current = socketIOClient(ENDPOINT)
+    socketRef.current = socketIOClient(ENDPOINT, {
+      withCredentials: true
+    })
+    socketRef.current.on('connect', () => {
+      console.log(socketRef.current.id)
+    })
+
     let test = true
+    const roomName = location.state.roomName
+    const playerName = location.state.playerName
 
     socketRef.current.emit('join-room', {
-      roomName: location.state.roomName,
-      playerName: location.state.playerName
+      roomName: roomName,
+      playerName: playerName
+    })
+
+    socketRef.current.on('disconnect', reason => {
+      console.log(reason)
+    })
+
+    socketRef.current.on('change-mode', roomObject => {
+      console.log('insert')
+      const stoneColor = roomObject.blackIsNext ? '○' : '●'
+      setMyStoneColor(stoneColor)
     })
 
     socketRef.current.on('over-notice', () => {
       console.log('over')
       navigate(-1)
     })
+
+    socketRef.current.on('update-piece', () => {})
 
     const element = getDom('.square')
     for (const elm of element) {
@@ -138,12 +160,18 @@ const Game = ({ route, navigation }) => {
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
 
   const handleClick = event => {
-    clickFunction(event)
+    clickFunction(event, myStoneColor)
+    console.log(myStoneColor)
   }
 
-  const clickFunction = event => {
+  const clickFunction = (event, myStoneColor) => {
     setMessage('')
+
     const stone = blackIsNext ? '○' : '●'
+    if (stone !== myStoneColor) {
+      return
+    }
+
     const slicedHistory = JSON.parse(
       JSON.stringify(history.history.slice(0, stepNumber + 1))
     )
@@ -194,6 +222,7 @@ const Game = ({ route, navigation }) => {
       for (const squareDom of squaresDom[stepNumber]) {
         squareDom.removeAttribute('id')
       }
+      socketRef.current.emit('put-piece', () => {})
     }
   }
 

@@ -74,7 +74,6 @@ const Home = () => {
 
   return (
     <div id='create-room'>
-      {console.log(map)}
       <Room value={map} socket={socketRef.current} test={test}></Room>
 
       <h1>オンラインWSリバーシ</h1>
