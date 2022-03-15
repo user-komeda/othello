@@ -3,7 +3,7 @@ import Square from '../square/Square'
 import { PropTypes } from 'prop-types'
 
 /**
- * @param props a
+ * @param props
  */
 const Board = (props) => {
   const square = props.value

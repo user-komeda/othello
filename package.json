@@ -55,9 +55,11 @@
     ]
   },
   "lint-staged": {
-    "./src/**": [
+    "*.{js,jsx,ts,tsx}": [
       "yarn lint",
-      "yarn format",
+      "yarn format --write"
+    ],
+    "*.{css,less,sass,scss}": [
       "yarn style-lint"
     ]
   }
