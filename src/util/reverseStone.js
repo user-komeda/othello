@@ -1,7 +1,7 @@
 /**
  * @param clickedRowIndex クリックした行座標
  * @param clickedColIndex クリックした列座標
- * @param hougaku 方角
+ * @param hougaku
  * @param rowIndex 行index
  * @param colIndex 列index
  * @param square オセロの盤面

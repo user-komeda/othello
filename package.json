@@ -57,7 +57,8 @@
   "lint-staged": {
     "./src/**": [
       "yarn lint",
-      "yarn format"
+      "yarn format",
+      "yarn style-lint"
     ]
   }
 }
