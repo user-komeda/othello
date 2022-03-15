@@ -1,25 +1,46 @@
 {
   "name": "othello",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "classnames": "^2.3.1",
-    "jsdoc": "^3.6.6",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.3"
-  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:user-komeda/othello.git",
+  "author": "user_komeda <shigoto922@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .js --config .eslintrc.json",
+    "style-lint": "stylelint src/*.css",
+    "format": "prettier --write src/**/*"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^38.0.4",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-unicorn": "^41.0.0",
+    "husky": "^7.0.4",
+    "jsdoc": "^3.6.10",
+    "lint-staged": "^12.3.5",
+    "prettier": "^2.5.1",
+    "stylelint": "^14.5.3",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^25.0.0",
+    "stylelint-declaration-block-no-ignored-properties": "^2.5.0",
+    "stylelint-prettier": "^2.0.0"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "classnames": "^2.3.1",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "^5.0.0"
   },
   "browserslist": {
     "production": [
@@ -31,6 +52,12 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "./src/**": [
+      "yarn lint",
+      "yarn format"
     ]
   }
 }

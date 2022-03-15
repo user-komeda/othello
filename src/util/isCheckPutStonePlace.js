@@ -1,8 +1,8 @@
 /**
  *
- * @param {*} index
- * @param {NodeListOf<Element>} squares
- * @returns
+ * @param {*} index 石を置いた座標
+ * @param {*} squares 現在の盤面
+ * @returns {*} おけるかどうか
  */
 const isCheckPutStonePlace = (index, squares) => {
   const idName = squares[index].id
