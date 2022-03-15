@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { PropTypes } from 'prop-types'
 
 /**
- * @param props
+ * @param props a
  */
 const Square = props => {
   const element = useRef(null)
