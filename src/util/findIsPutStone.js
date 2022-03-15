@@ -1,8 +1,7 @@
 /**
  * すべてのマスに対して石を置くことができるか調べる
- *
- * @param {Array<string[]>} square 現在の盤面の石の状態
- * @param {string} stone おこうとしている石
+ * @param {Array<String[]>} square 現在の盤面の石の状態
+ * @param {String} stone おこうとしている石
  */
 const check = (square, stone) => {
   const rowIndex = []
@@ -27,11 +26,10 @@ const check = (square, stone) => {
 
 /**
  * すべてのマスに対してその隣のマスに違う石が置いているか調べる
- *
- * @param {*} rowIndex 盤面の行座標
- * @param {*} colIndex 盤面の列座標
- * @param {*} stone おこうとしている石
- * @param {*} square 現在の盤面の石の状態
+ * @param {int} rowIndex 盤面の行座標
+ * @param {int} colIndex 盤面の列座標
+ * @param {String} stone おこうとしている石
+ * @param {Array<String[]>} square 現在の盤面の石の状態
  */
 const checkNext = (rowIndex, colIndex, stone, square) => {
   const hougaku = []
@@ -65,13 +63,12 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
 
 /**
  * checkNext関数で調べた方向に対してすべて石を取得する
- *
- * @param {string} stone おこうとしている石
- * @param {number} i 行方向への増加量
- * @param {number} j 列方向への増加量
- * @param {Array<string[]>} square 現在の盤面の石の状態
- * @param {number} rowIndex 盤面の行座標
- * @param {number} colIndex 盤面の列座標
+ * @param {String} stone おこうとしている石
+ * @param {int} i 行方向への増加量
+ * @param {int} j 列方向への増加量
+ * @param {Array<String[]>} square 現在の盤面の石の状態
+ * @param {int} rowIndex 盤面の行座標
+ * @param {int} colIndex 盤面の列座標
  */
 
 const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
@@ -95,9 +92,8 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
 //
 /**
  *石が置けるか確認
- *
- * @param {Array<string[]>} array 配列
- * @param {string} stone おこうとしている石
+ * @param {Array<String[]>} array
+ * @param {String} stone
  */
 const checkArrayStone = (array, stone) => {
   const filteredArray = array
@@ -105,7 +101,7 @@ const checkArrayStone = (array, stone) => {
   if (firstIndex === 1) {
     return true
   }
-  const flag = true
+  let flag = true
   if (firstIndex !== -1) {
     filteredArray.length = firstIndex
     for (let i = 0; i < filteredArray.length; i++) {
@@ -126,9 +122,8 @@ const checkArrayStone = (array, stone) => {
 
 /**
  * 石が置ける方角を調べる
- *
- * @param {number} i 行方向への増加量
- * @param {number} j 列方向への増加量
+ * @param {int} i 行方向への増加量
+ * @param {int} j 列方向への増加量
  */
 const checkHougaku = (i, j) => {
   switch (i) {

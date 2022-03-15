@@ -11,9 +11,6 @@ import reverseStone from './util/reverseStone'
 import addAnimationId from './util/addAnimationId'
 import getDom from './util/getDom'
 
-/**
- *
- */
 const App = () => {
   const test = (state, selector) => {
     if (state === undefined) {
@@ -29,6 +26,7 @@ const App = () => {
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
   const [flag, setFlag] = useState(true)
+  const [removeFlag, setRemoveFlag] = useState(false)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
   const [count, setCount] = useState(0)
@@ -38,24 +36,24 @@ const App = () => {
   const [notReverseHistory, setNotReverseHistory] = useState({
     notReverseHistory: [
       {
-        notReverseSquare: INIT_BOARD,
-      },
-    ],
+        notReverseSquare: INIT_BOARD
+      }
+    ]
   })
 
   const [reverseIndex, setReverseIndex] = useState([])
   const [history, setHistory] = useState({
     history: [
       {
-        square: INIT_BOARD,
-      },
-    ],
+        square: INIT_BOARD
+      }
+    ]
   })
 
   useEffect(() => {
     const element = getDom('.square')
     for (const elm of element) {
-      elm.addEventListener('transitionend', (event) => {
+      elm.addEventListener('transitionend', event => {
         if (/test/.test(event.target.parentNode.className)) {
           setTimeout(() => {
             console.log(jumpFlag)
@@ -117,7 +115,7 @@ const App = () => {
 
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
 
-  const handleClick = (event) => {
+  const handleClick = event => {
     setMessage('')
     const stone = blackIsNext ? '○' : '●'
     const slicedHistory = JSON.parse(
@@ -155,17 +153,18 @@ const App = () => {
       )
 
       setHistory({
-        history: slicedHistory.concat([{ square: changedSquares }]),
+        history: slicedHistory.concat([{ square: changedSquares }])
       })
       setNotReverseHistory({
         notReverseHistory: notReverseSlicedHistory.concat([
-          { notReverseSquare: notReverseSquare },
-        ]),
+          { notReverseSquare: notReverseSquare }
+        ])
       })
       setReverseIndex(reverseIndexes)
       setBlackIsNext(!blackIsNext)
       setFlag(true)
       setStepNumber(slicedHistory.length)
+      setRemoveFlag(false)
       for (const squareDom of squaresDom[stepNumber]) {
         squareDom.removeAttribute('id')
       }
@@ -173,14 +172,14 @@ const App = () => {
   }
 
   const jump = () => {
-    const step = stepNumber - 1
+    let step = stepNumber - 1
     if (step < 0) {
       return
     }
     setJumpFlag(true)
     setCount(count + 1)
     if (message !== '') {
-      const step = stepNumber - 2
+      let step = stepNumber - 2
       setStepNumber(step)
       setBlackIsNext(!blackIsNext)
       setMessage('')
@@ -195,8 +194,8 @@ const App = () => {
   }
 
   return (
-    <div className="game">
-      <div className="game-board">
+    <div className='game'>
+      <div className='game-board'>
         <Board
           value={
             jumpFlag
@@ -210,7 +209,7 @@ const App = () => {
           blackIsNext={blackIsNext}
         />
       </div>
-      <div className="game-info">
+      <div className='game-info'>
         <div>{status}</div>
         <p>{message}</p>
         <p>黒の石の数:{blackStoneCount}</p>
