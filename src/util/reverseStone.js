@@ -1,5 +1,12 @@
-import Square from '../square/Square'
-
+/**
+ * @param clickedRowIndex クリックした行座標
+ * @param clickedColIndex クリックした列座標
+ * @param hougaku 方角
+ * @param rowIndex 行index
+ * @param colIndex 列index
+ * @param square オセロの盤面
+ * @param stone オセロの石
+ */
 const reverseStone = (
   clickedRowIndex,
   clickedColIndex,
@@ -25,7 +32,7 @@ const reverseStone = (
   })
 
   let test = null
-  label: for (const [index, rowVal] of rowIndexMatch.entries()) {
+  label: for (const rowVal of rowIndexMatch) {
     for (const colVal of colIndexMatch) {
       if (rowVal === colVal) {
         test = rowVal
@@ -37,7 +44,7 @@ const reverseStone = (
   for (const val of checkedHougaku) {
     let rowChange = 0
     let colChange = 0
-    let [rowIndexChange, colIndexChange] = convertHougaku(val)
+    const [rowIndexChange, colIndexChange] = convertHougaku(val)
     const array = checkReverse(
       rowIndexChange,
       colIndexChange,
@@ -46,6 +53,7 @@ const reverseStone = (
       square,
       stone
     )
+    // eslint-disable-next-line no-unused-vars
     for (const _ of array) {
       square[clickedRowIndex + rowChange][clickedColIndex + colChange] = stone
       rowChange += rowIndexChange
@@ -55,7 +63,7 @@ const reverseStone = (
   return [square, notReverseStone]
 }
 
-const convertHougaku = hougaku => {
+const convertHougaku = (hougaku) => {
   let rowChangeNum = null
   let colChangeNum = null
   switch (hougaku) {
@@ -132,7 +140,7 @@ const checkReverse = (
     array.length = nextIndex + 1
   }
 
-  return array.filter(val => {
+  return array.filter((val) => {
     return val !== ''
   })
 }

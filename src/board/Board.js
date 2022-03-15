@@ -1,16 +1,22 @@
 import React from 'react'
 import Square from '../square/Square'
-const Board = props => {
+import { PropTypes } from 'prop-types'
+
+/**
+ * @param props a
+ */
+const Board = (props) => {
   const square = props.value
   // console.log(square)
   return (
     <>
       {square.map((square, rowIndex) => {
         return (
-          <div className='board-row'>
+          <div className="board-row" key={rowIndex}>
             {square.map((array, colIndex) => {
               return (
                 <Square
+                  key={colIndex}
                   value={array}
                   onClick={props.onClick}
                   count={props.count}
@@ -30,4 +36,14 @@ const Board = props => {
     </>
   )
 }
+
+Board.propTypes = {
+  count: PropTypes.number,
+  reverseIndex: PropTypes.array,
+  flag: PropTypes.bool,
+  onClick: PropTypes.func,
+  blackIsNext: PropTypes.bool,
+  value: PropTypes.array,
+}
+
 export default Board

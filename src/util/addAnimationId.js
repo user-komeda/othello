@@ -1,3 +1,8 @@
+/**
+ * @param nowStone 置いた石
+ * @param squares 現在の盤面
+ * @param changedSquares 変更後の盤面
+ */
 const addAnimationId = (nowStone, squares, changedSquares) => {
   const reverseIndex = []
   for (const [index, square] of squares.entries()) {

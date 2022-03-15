@@ -1,4 +1,7 @@
-const checkStoneCount = squares => {
+/**
+ * @param squares 現在の盤面
+ */
+const checkStoneCount = (squares) => {
   let blackStoneCount = 0
   let whiteStoneCount = 0
 
@@ -6,7 +9,7 @@ const checkStoneCount = squares => {
     pre.push(...current)
     return pre
   }, [])
-  for (let flatSquare of flatSquares) {
+  for (const flatSquare of flatSquares) {
     if (flatSquare === '●') {
       blackStoneCount++
     } else if (flatSquare === '○') {
