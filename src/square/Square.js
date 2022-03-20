@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useReduce, useRef } from 'react'
-import classNames from 'classnames'
+/* global process*/
 
-const Square = props => {
-  // const [count, setCount] = useState(0)
+import React, { useEffect, useRef } from 'react'
+import classNames from 'classnames'
+import { PropTypes } from 'prop-types'
+
+/**
+ * @param props a
+ */
+const Square = (props) => {
   const element = useRef(null)
   const WHITE_COMA = `${process.env.PUBLIC_URL}img/disk_blue.png`
   const BLACK_COMA = `${process.env.PUBLIC_URL}img/disk_pink.png`
@@ -12,15 +17,20 @@ const Square = props => {
   } else if (props.value === '○') {
     coma = WHITE_COMA
   }
+
+  // アニメーション設定
   useEffect(() => {
     element.current.classList.remove('test')
     if (props.flag && element.current.children[0].firstChild && props.flag) {
-      const frontImgSrc = element.current.children[0].firstChild.getAttribute(
-        'src'
-      )
-      const backImgSrc = element.current.children[1].firstChild.getAttribute(
-        'src'
-      )
+      // 表画像の属性取得
+      const frontImgSrc =
+        element.current.children[0].firstChild.getAttribute('src')
+
+      // 裏画像の属性取得
+      const backImgSrc =
+        element.current.children[1].firstChild.getAttribute('src')
+
+      // アニメーション設定
       switch (props.blackIsNext ? '○' : '●') {
         case '○':
           switch (props.value) {
@@ -76,13 +86,23 @@ const Square = props => {
       className={classNames('square')}
       onClick={props.onClick}
     >
-      <div className='front'>
+      <div className="front">
         {props.value && (
           <img src={coma === BLACK_COMA ? WHITE_COMA : BLACK_COMA} />
         )}
       </div>
-      <div className='back'>{props.value && <img src={coma} />}</div>
+      <div className="back">{props.value && <img src={coma} />}</div>
     </button>
   )
 }
+
+Square.propTypes = {
+  count: PropTypes.number,
+  className: PropTypes.string,
+  flag: PropTypes.bool,
+  onClick: PropTypes.func,
+  blackIsNext: PropTypes.bool,
+  value: PropTypes.array,
+}
+
 export default Square

@@ -1,6 +1,6 @@
 body {
-  font: 14px 'Century Gothic', Futura, sans-serif;
   margin: 20px;
+  font: 14px 'Century Gothic', Futura, sans-serif;
 }
 
 ol,
@@ -8,10 +8,10 @@ ul {
   padding-left: 30px;
 }
 
-.board-row:after {
+.board-row::after {
+  display: table;
   clear: both;
   content: '';
-  display: table;
 }
 
 .status {
@@ -19,19 +19,19 @@ ul {
 }
 
 .square {
-  background: lawngreen;
-  border: 1px solid #000;
+  position: relative;
   float: left;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  margin-top: -1px;
+  margin-right: -1px;
   font-size: 50px;
   font-weight: bold;
   line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
   text-align: center;
-  width: 34px;
-  position: relative;
+  background: lawngreen;
+  border: 1px solid #000;
   transition: all 10s;
 }
 
@@ -39,11 +39,11 @@ ul {
   outline: none;
 }
 
-#canClick::after {
-  content: '●';
+#can-click::after {
+  display: block;
   font-size: 20px;
   color: darkgray;
-  display: block;
+  content: '●';
 }
 
 .kbd-navigation .square:focus {
@@ -70,20 +70,19 @@ img {
   position: absolute;
   top: 0;
   left: 0;
-
   transition: all 1s;
-
   backface-visibility: hidden;
 }
+
 .square .back {
   transform: rotateY(-180deg);
-  /* transition: none; */
 }
+
 .reverse .front {
   transform: rotateY(180deg);
 }
+
 .reverse .back {
-  /* transition: none; */
   transform: rotateY(0);
 }
 
@@ -92,6 +91,5 @@ img {
 }
 
 .square .none {
-  /* transition: none; */
   transform: none;
 }
