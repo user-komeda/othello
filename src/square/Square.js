@@ -1,4 +1,5 @@
 /* global process*/
+
 import React, { useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import { PropTypes } from 'prop-types'
@@ -16,13 +17,20 @@ const Square = (props) => {
   } else if (props.value === '○') {
     coma = WHITE_COMA
   }
+
+  // アニメーション設定
   useEffect(() => {
     element.current.classList.remove('test')
     if (props.flag && element.current.children[0].firstChild && props.flag) {
+      // 表画像の属性取得
       const frontImgSrc =
         element.current.children[0].firstChild.getAttribute('src')
+
+      // 裏画像の属性取得
       const backImgSrc =
         element.current.children[1].firstChild.getAttribute('src')
+
+      // アニメーション設定
       switch (props.blackIsNext ? '○' : '●') {
         case '○':
           switch (props.value) {

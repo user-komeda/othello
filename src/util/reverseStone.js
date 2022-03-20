@@ -1,7 +1,9 @@
 /**
+ * 石をひっくり返す関数
+ *
  * @param clickedRowIndex クリックした行座標
  * @param clickedColIndex クリックした列座標
- * @param hougaku
+ * @param hougaku ひっくり返す方角
  * @param rowIndex 行index
  * @param colIndex 列index
  * @param square オセロの盤面

@@ -39,7 +39,7 @@ ul {
   outline: none;
 }
 
-#canClick::after {
+#can-click::after {
   display: block;
   font-size: 20px;
   color: darkgray;
@@ -76,8 +76,6 @@ img {
 
 .square .back {
   transform: rotateY(-180deg);
-
-  /* transition: none; */
 }
 
 .reverse .front {
@@ -85,7 +83,6 @@ img {
 }
 
 .reverse .back {
-  /* transition: none; */
   transform: rotateY(0);
 }
 
@@ -94,6 +91,5 @@ img {
 }
 
 .square .none {
-  /* transition: none; */
   transform: none;
 }

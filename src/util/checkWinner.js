@@ -1,4 +1,6 @@
 /**
+ * 勝利判定関数
+ *
  * @param blackStoneCount 黒石の数
  * @param whiteStoneCount 白石の数
  */

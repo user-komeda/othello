@@ -3,11 +3,10 @@ import Square from '../square/Square'
 import { PropTypes } from 'prop-types'
 
 /**
- * @param props
+ * @param props props
  */
 const Board = (props) => {
   const square = props.value
-  // console.log(square)
   return (
     <>
       {square.map((square, rowIndex) => {

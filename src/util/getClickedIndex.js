@@ -1,4 +1,6 @@
 /**
+ * クリックした個所の座標を調べる
+ *
  * @param event クリックイベント
  * @param button button
  */
