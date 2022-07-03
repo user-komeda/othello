@@ -7,9 +7,12 @@ import {
   Switch,
   Route,
   Link,
-  Routes
+  Routes,
 } from 'react-router-dom'
 
+/**
+ *
+ */
 const App = () => {
   return (
     // <div>

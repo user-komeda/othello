@@ -46,24 +46,24 @@ const Game = ({ route, navigation }) => {
   const [notReverseHistory, setNotReverseHistory] = useState({
     notReverseHistory: [
       {
-        notReverseSquare: INIT_BOARD
-      }
-    ]
+        notReverseSquare: INIT_BOARD,
+      },
+    ],
   })
 
   const [reverseIndex, setReverseIndex] = useState([])
   const [history, setHistory] = useState({
     history: [
       {
-        square: INIT_BOARD
-      }
-    ]
+        square: INIT_BOARD,
+      },
+    ],
   })
 
   useEffect(() => {
     console.log('render')
     socketRef.current = socketIOClient(ENDPOINT, {
-      withCredentials: true
+      withCredentials: true,
     })
     socketRef.current.on('connect', () => {
       console.log(socketRef.current.id)
@@ -75,7 +75,7 @@ const Game = ({ route, navigation }) => {
 
     socketRef.current.emit('join-room', {
       roomName: roomName,
-      playerName: playerName
+      playerName: playerName,
     })
 
     socketRef.current.on('disconnect', reason => {
@@ -168,9 +168,9 @@ const Game = ({ route, navigation }) => {
     setMessage('')
 
     const stone = blackIsNext ? '○' : '●'
-    if (stone !== myStoneColor) {
-      return
-    }
+    // if (stone !== myStoneColor) {
+    //   return
+    // }
 
     const slicedHistory = JSON.parse(
       JSON.stringify(history.history.slice(0, stepNumber + 1))
@@ -207,12 +207,12 @@ const Game = ({ route, navigation }) => {
       )
 
       setHistory({
-        history: slicedHistory.concat([{ square: changedSquares }])
+        history: slicedHistory.concat([{ square: changedSquares }]),
       })
       setNotReverseHistory({
         notReverseHistory: notReverseSlicedHistory.concat([
-          { notReverseSquare: notReverseSquare }
-        ])
+          { notReverseSquare: notReverseSquare },
+        ]),
       })
       setReverseIndex(reverseIndexes)
       setBlackIsNext(!blackIsNext)
