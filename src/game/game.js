@@ -14,7 +14,13 @@ import socketIOClient from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
 const ENDPOINT = 'http://localhost:80'
 
-const Game = ({ route, navigation }) => {
+/**
+ *
+ * @param root0
+ * @param root0.route
+ * @param root0.navigation
+ */
+const Game = () => {
   const socketRef = useRef()
   const location = useLocation()
   const navigate = useNavigate()
@@ -36,7 +42,6 @@ const Game = ({ route, navigation }) => {
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
   const [flag, setFlag] = useState(true)
-  const [removeFlag, setRemoveFlag] = useState(false)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
   const [count, setCount] = useState(0)
@@ -61,6 +66,7 @@ const Game = ({ route, navigation }) => {
   })
 
   useEffect(() => {
+    console.log(history)
     console.log('render')
     socketRef.current = socketIOClient(ENDPOINT, {
       withCredentials: true,
@@ -69,7 +75,6 @@ const Game = ({ route, navigation }) => {
       console.log(socketRef.current.id)
     })
 
-    let test = true
     const roomName = location.state.roomName
     const playerName = location.state.playerName
 
@@ -93,7 +98,15 @@ const Game = ({ route, navigation }) => {
       navigate(-1)
     })
 
-    socketRef.current.on('update-piece', () => {})
+    socketRef.current.on('update-piece', value => {
+      console.log(value.value.history)
+      setHistory({ history: value.value.history })
+      setNotReverseHistory({
+        notReverseHistory: value.value.notReverseHistory,
+      })
+      setStepNumber(value.value.stepNumber)
+      console.log(notReverseHistory)
+    })
 
     const element = getDom('.square')
     for (const elm of element) {
@@ -168,9 +181,9 @@ const Game = ({ route, navigation }) => {
     setMessage('')
 
     const stone = blackIsNext ? '○' : '●'
-    // if (stone !== myStoneColor) {
-    //   return
-    // }
+    if (stone !== myStoneColor) {
+      return
+    }
 
     const slicedHistory = JSON.parse(
       JSON.stringify(history.history.slice(0, stepNumber + 1))
@@ -218,16 +231,20 @@ const Game = ({ route, navigation }) => {
       setBlackIsNext(!blackIsNext)
       setFlag(true)
       setStepNumber(slicedHistory.length)
-      setRemoveFlag(false)
       for (const squareDom of squaresDom[stepNumber]) {
         squareDom.removeAttribute('id')
       }
-      socketRef.current.emit('put-piece', () => {})
+      console.log('aaa')
+      socketRef.current.emit('abc', {
+        history: [{ square: changedSquares }],
+        notReverseHistory: [{ notReverseSquare: notReverseSquare }],
+        stepNumber: stepNumber + 1,
+      })
     }
   }
 
   const jump = () => {
-    let step = stepNumber - 1
+    const step = stepNumber - 1
     if (step < 0) {
       return
     }
@@ -235,7 +252,7 @@ const Game = ({ route, navigation }) => {
     setJumpFlag(true)
     setCount(count + 1)
     if (message !== '') {
-      let step = stepNumber - 2
+      const step = stepNumber - 2
       setStepNumber(step)
       setBlackIsNext(!blackIsNext)
       setMessage('')
@@ -252,11 +269,12 @@ const Game = ({ route, navigation }) => {
   return (
     <div className='game'>
       <div className='game-board'>
+        {console.dir(notReverseHistory)}
         <Board
           value={
             jumpFlag
-              ? history.history[stepNumber].square
-              : notReverseHistory.notReverseHistory[stepNumber].notReverseSquare
+              ? history.history[0].square
+              : notReverseHistory.notReverseHistory[0].notReverseSquare
           }
           onClick={handleClick}
           count={count}

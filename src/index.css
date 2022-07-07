@@ -1,3 +1,4 @@
+/* stylelint-disable-next-line prettier/prettier */
 body {
   margin: 20px;
   font: 14px 'Century Gothic', Futura, sans-serif;
@@ -39,7 +40,7 @@ ul {
   outline: none;
 }
 
-#can-click::after {
+#canClick::after {
   display: block;
   font-size: 20px;
   color: darkgray;

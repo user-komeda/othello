@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import React from 'react'
 import axios from 'axios'
-import socketIOClient from 'socket.io-client'
 import { useNavigate } from 'react-router-dom'
 import Room from '../room/room'
-const ENDPOINT = 'http://localhost:80'
 
+/**
+ *
+ */
 const Home = () => {
   const [inputRoomState, setInputRoomState] = useState('')
   const [inputNameState, setInputNameState] = useState('')
@@ -45,7 +45,7 @@ const Home = () => {
   const handleClick = () => {
     const roomInfo = {
       roomName: inputRoomState,
-      playerName: inputNameState
+      playerName: inputNameState,
     }
 
     // history.push({
@@ -55,22 +55,22 @@ const Home = () => {
 
     history(`/game?${inputRoomState}`, {
       state: roomInfo,
-      socket: socketRef.current
+      socket: socketRef.current,
     })
   }
 
-  const checkGameState = () => {
-    // socketRef.current.on('change-mode', mode => {
-    //   console.log(mode)
-    //   if ((mode.mode = 'wait')) {
-    //     // 対戦相手町中
-    //   } else if ((mode.mode = 'start')) {
-    //     //大戦中
-    //   } else {
-    //     console.warn('人数オーバーです')
-    //   }
-    // })
-  }
+  // const checkGameState = () => {
+  // socketRef.current.on('change-mode', mode => {
+  //   console.log(mode)
+  //   if ((mode.mode = 'wait')) {
+  //     // 対戦相手町中
+  //   } else if ((mode.mode = 'start')) {
+  //     //大戦中
+  //   } else {
+  //     console.warn('人数オーバーです')
+  //   }
+  // })
+  // }
 
   return (
     <div id='create-room'>
