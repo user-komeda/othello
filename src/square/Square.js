@@ -21,6 +21,7 @@ const Square = (props) => {
   // アニメーション設定
   useEffect(() => {
     element.current.classList.remove('test')
+    console.log('insert')
     if (props.flag && element.current.children[0].firstChild && props.flag) {
       // 表画像の属性取得
       const frontImgSrc =
@@ -68,11 +69,10 @@ const Square = (props) => {
           break
       }
     } else {
+      console.log('insert')
       if (element.current.children[1].classList.contains('none')) {
         if (/none/.test(element.current.children[1].classList[1])) {
           element.current.children[1].classList.add('transition_none')
-        } else {
-          console.log(element.current.children[1].classList[0])
         }
       }
       element.current.children[1].classList.remove('none')

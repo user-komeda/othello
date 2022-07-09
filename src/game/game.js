@@ -66,14 +66,10 @@ const Game = () => {
   })
 
   useEffect(() => {
-    console.log(history)
-    console.log('render')
     socketRef.current = socketIOClient(ENDPOINT, {
       withCredentials: true,
     })
-    socketRef.current.on('connect', () => {
-      console.log(socketRef.current.id)
-    })
+    socketRef.current.on('connect', () => {})
 
     const roomName = location.state.roomName
     const playerName = location.state.playerName
@@ -83,34 +79,32 @@ const Game = () => {
       playerName: playerName,
     })
 
-    socketRef.current.on('disconnect', reason => {
-      console.log(reason)
-    })
+    socketRef.current.on('disconnect', (reason) => {})
 
-    socketRef.current.on('change-mode', roomObject => {
-      console.log('insert')
+    socketRef.current.on('change-mode', (roomObject) => {
       const stoneColor = roomObject.blackIsNext ? '○' : '●'
       setMyStoneColor(stoneColor)
     })
 
     socketRef.current.on('over-notice', () => {
-      console.log('over')
       navigate(-1)
     })
 
-    socketRef.current.on('update-piece', value => {
-      console.log(value.value.history)
+    socketRef.current.on('update-piece', (value) => {
       setHistory({ history: value.value.history })
       setNotReverseHistory({
         notReverseHistory: value.value.notReverseHistory,
       })
+
       setStepNumber(value.value.stepNumber)
-      console.log(notReverseHistory)
+      setBlackIsNext(!value.value.blackIsNext)
+      setReverseIndex(value.value.reverseIndex)
+      setCount(count + 1)
     })
 
     const element = getDom('.square')
     for (const elm of element) {
-      elm.addEventListener('transitionend', event => {
+      elm.addEventListener('transitionend', (event) => {
         if (/test/.test(event.target.parentNode.className)) {
           setTimeout(() => {
             event.target.parentNode.children[1].classList.add('none')
@@ -172,13 +166,13 @@ const Game = () => {
 
   const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     clickFunction(event, myStoneColor)
-    console.log(myStoneColor)
   }
 
   const clickFunction = (event, myStoneColor) => {
     setMessage('')
+    console.log(history)
 
     const stone = blackIsNext ? '○' : '●'
     if (stone !== myStoneColor) {
@@ -234,11 +228,16 @@ const Game = () => {
       for (const squareDom of squaresDom[stepNumber]) {
         squareDom.removeAttribute('id')
       }
-      console.log('aaa')
       socketRef.current.emit('abc', {
-        history: [{ square: changedSquares }],
-        notReverseHistory: [{ notReverseSquare: notReverseSquare }],
+        history: slicedHistory.concat([{ square: changedSquares }]),
+        notReverseHistory: notReverseSlicedHistory.concat([
+          { notReverseSquare: notReverseSquare },
+        ]),
         stepNumber: stepNumber + 1,
+        blackIsNext: blackIsNext,
+        flag: jumpFlag,
+        reverseIndex: reverseIndexes,
+        count: count + 1,
       })
     }
   }
@@ -267,14 +266,14 @@ const Game = () => {
   }
 
   return (
-    <div className='game'>
-      <div className='game-board'>
+    <div className="game">
+      <div className="game-board">
         {console.dir(notReverseHistory)}
         <Board
           value={
             jumpFlag
-              ? history.history[0].square
-              : notReverseHistory.notReverseHistory[0].notReverseSquare
+              ? history.history[stepNumber].square
+              : notReverseHistory.notReverseHistory[stepNumber].notReverseSquare
           }
           onClick={handleClick}
           count={count}
@@ -283,7 +282,7 @@ const Game = () => {
           blackIsNext={blackIsNext}
         />
       </div>
-      <div className='game-info'>
+      <div className="game-info">
         <div>{status}</div>
         <p>{message}</p>
         <p>黒の石の数:{blackStoneCount}</p>
@@ -291,7 +290,7 @@ const Game = () => {
         <p>{winner}</p>
         <button onClick={jump}>待った</button>
       </div>
-      <div className='box'></div>
+      <div className="box"></div>
     </div>
   )
 }

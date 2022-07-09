@@ -5,9 +5,9 @@ import { PropTypes } from 'prop-types'
 /**
  * @param props props
  */
-const Board = props => {
+const Board = (props) => {
   const square = props.value
-
+  console.log(props.reverseIndex)
   // if (!props.value) {
   //   return
   // }
@@ -16,7 +16,7 @@ const Board = props => {
     <>
       {square.map((square, rowIndex) => {
         return (
-          <div className='board-row' key={rowIndex}>
+          <div className="board-row" key={rowIndex}>
             {square.map((array, colIndex) => {
               return (
                 <Square

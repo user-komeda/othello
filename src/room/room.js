@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
  *
  * @param props
  */
-const Room = props => {
+const Room = (props) => {
   const navigate = useNavigate()
 
   const roomObjectList = []
@@ -13,11 +13,10 @@ const Room = props => {
   for (const value of props.value) {
     roomObjectList.push(value[1].roomObject)
   }
-  const handleClick = event => {
+  const handleClick = (event) => {
     const targetElement = event.currentTarget
     const playerName = targetElement.childNodes[0].textContent
     const roomName = targetElement.childNodes[1].textContent
-    console.log(playerName, roomName)
     const roomInfo = {
       roomName: roomName,
       playerName: playerName,
