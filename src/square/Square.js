@@ -21,6 +21,7 @@ const Square = (props) => {
   // アニメーション設定
   useEffect(() => {
     element.current.classList.remove('test')
+    console.log('insert')
     if (props.flag && element.current.children[0].firstChild && props.flag) {
       // 表画像の属性取得
       const frontImgSrc =
@@ -35,7 +36,6 @@ const Square = (props) => {
         case '○':
           switch (props.value) {
             case '○':
-              console.log(element.current)
               if (/pink/.test(frontImgSrc)) {
                 element.current.children[1].classList.remove('none')
               } else if (/blue/.test(frontImgSrc)) {
@@ -50,7 +50,6 @@ const Square = (props) => {
           }
           break
         case '●':
-          console.log('black')
           switch (props.value) {
             case '○':
               element.current.children[1].classList.remove('none')
@@ -70,12 +69,18 @@ const Square = (props) => {
           break
       }
     } else {
+      console.log('insert')
+      if (element.current.children[1].classList.contains('none')) {
+        if (/none/.test(element.current.children[1].classList[1])) {
+          element.current.children[1].classList.add('transition_none')
+        }
+      }
       element.current.children[1].classList.remove('none')
       if (/reverse/.test(props.className)) {
         element.current.classList.add('test')
         setTimeout(() => {
           element.current.classList.add(props.className)
-        }, 500)
+        }, 200)
       }
     }
   }, [props.count])

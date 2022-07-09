@@ -7,6 +7,11 @@ import { PropTypes } from 'prop-types'
  */
 const Board = (props) => {
   const square = props.value
+  console.log(props.reverseIndex)
+  // if (!props.value) {
+  //   return
+  // }
+
   return (
     <>
       {square.map((square, rowIndex) => {

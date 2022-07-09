@@ -7,7 +7,7 @@
  */
 const isCheckPutStonePlace = (index, squares) => {
   const idName = squares[index].id
-  if (squares[index].textContent === '' && idName === 'can-click') {
+  if (squares[index].textContent === '' && idName === 'canClick') {
     return true
   } else {
     return false
