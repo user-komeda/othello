@@ -8,12 +8,15 @@ import checkStoneCount from '../util/checkStoneCount'
 import '../index.css'
 import checkWinner from '../util/checkWinner'
 import reverseStone from '../util/reverseStone'
-import addAnimationId from '../util/addAnimationId'
+import getReverseIndex from '../util/getReverseIndex'
 import getDom from '../util/getDom'
 import socketIOClient from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
+import addCanClickId from '../util/addCanClickId'
 const ENDPOINT = 'http://localhost:80'
-
+let tmpRowIndex = []
+let tmpColIndex = []
+let tmpHougaku = []
 /**
  *
  * @param root0
@@ -33,15 +36,11 @@ const Game = () => {
     }
   }
 
-  const [rowIndex, setRowIndex] = useState()
-  const [colIndex, setColIndex] = useState()
-  const [hougaku, setHougaku] = useState()
   const [blackIsNext, setBlackIsNext] = useState(false)
   const [myStoneColor, setMyStoneColor] = useState()
-  // const [status, setStatus] = useState()
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
-  const [flag, setFlag] = useState(true)
+  const [skipFlag, setSkipFlag] = useState(true)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
   const [count, setCount] = useState(0)
@@ -119,48 +118,31 @@ const Game = () => {
   useEffect(() => {
     const arrayIndex = []
     const stone = blackIsNext ? '○' : '●'
+    const tmpSquaresDom =
+      squaresDom.length === 0 ? getDom('.square') : squaresDom[stepNumber - 1]
+
     const [rowIndex, colIndex, hougaku] = check(
       history.history[stepNumber].square,
       stone
     )
-    for (const [index, item] of rowIndex.entries()) {
-      const rowNum = item * 8
-      const colNum = colIndex[index]
-      arrayIndex.push(rowNum + colNum)
-    }
-    if (squaresDom[stepNumber - 1]) {
-      for (const item of arrayIndex) {
-        for (const [index, squareDom] of squaresDom[stepNumber - 1].entries()) {
-          if (index === item) {
-            squareDom.id = 'canClick'
-          }
-        }
-      }
-    } else {
-      const squaresDom = getDom('.square')
-      for (const item of arrayIndex) {
-        for (const [index, squareDom] of squaresDom.entries()) {
-          if (index === item) {
-            squareDom.id = 'canClick'
-          }
-        }
-      }
-    }
-    if (flag === false && arrayIndex.length === 0) {
+
+    addCanClickId(rowIndex, colIndex, arrayIndex, tmpSquaresDom)
+
+    if (skipFlag === false && arrayIndex.length === 0) {
       setWinner(checkWinner(blackStoneCount, whiteStoneCount))
     }
 
-    if (arrayIndex.length === 0 && flag === true) {
-      setFlag(false)
+    if (arrayIndex.length === 0 && skipFlag === true) {
+      setSkipFlag(false)
       setBlackIsNext(!blackIsNext)
       setMessage(`${stone}スキップされました`)
     }
     const stoneCount = checkStoneCount(history.history[stepNumber].square)
     setBlackStoneCount(stoneCount[0])
     setWhiteStoneCount(stoneCount[1])
-    setRowIndex(rowIndex)
-    setColIndex(colIndex)
-    setHougaku(hougaku)
+    tmpRowIndex = rowIndex
+    tmpColIndex = colIndex
+    tmpHougaku = hougaku
     setSquaresDom('.square')
   }, [blackIsNext])
 
@@ -201,13 +183,13 @@ const Game = () => {
       const [changedSquares, notReverseSquare] = reverseStone(
         clickedRowIndex,
         clickedColIndex,
-        hougaku,
-        rowIndex,
-        colIndex,
+        tmpHougaku,
+        tmpRowIndex,
+        tmpColIndex,
         square,
         stone
       )
-      const reverseIndexes = addAnimationId(
+      const reverseIndexes = getReverseIndex(
         stone,
         history.history[stepNumber].square,
         changedSquares
@@ -223,7 +205,7 @@ const Game = () => {
       })
       setReverseIndex(reverseIndexes)
       setBlackIsNext(!blackIsNext)
-      setFlag(true)
+      setSkipFlag(true)
       setStepNumber(slicedHistory.length)
       for (const squareDom of squaresDom[stepNumber]) {
         squareDom.removeAttribute('id')

@@ -1,11 +1,11 @@
 /**
- * アニメーション対象のdomにidをつける
+ * ひっくり返された石の座標取得
  *
  * @param nowStone 置いた石
  * @param squares 現在の盤面
  * @param changedSquares 変更後の盤面
  */
-const addAnimationId = (nowStone, squares, changedSquares) => {
+const getReverseIndex = (nowStone, squares, changedSquares) => {
   const reverseIndex = []
   // 現在の盤面を取り出す
   for (const [index, square] of squares.entries()) {
@@ -20,4 +20,4 @@ const addAnimationId = (nowStone, squares, changedSquares) => {
   }
   return reverseIndex
 }
-export default addAnimationId
+export default getReverseIndex
