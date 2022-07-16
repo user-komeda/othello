@@ -17,7 +17,7 @@ const Home = () => {
   useEffect(() => {
     // socketRef.current = socketIOClient(ENDPOINT)
 
-    axios.get('http://localhost').then((response) => {
+    axios.get('http://localhost').then(response => {
       setRoomState(() => {
         for (const dataKey of Object.keys(response.data)) {
           map.set(dataKey, response.data[dataKey])
@@ -34,11 +34,11 @@ const Home = () => {
 
   const history = useNavigate()
 
-  const handleRoomNameChange = (event) => {
+  const handleRoomNameChange = event => {
     setInputRoomState(event.target.value)
   }
 
-  const handleNameChange = (event) => {
+  const handleNameChange = event => {
     setInputNameState(event.target.value)
   }
 
@@ -72,18 +72,18 @@ const Home = () => {
   // }
 
   return (
-    <div id="create-room">
+    <div id='create-room'>
       <Room value={map} socket={socketRef.current} test={test}></Room>
 
       <h1>オンラインWSリバーシ</h1>
       <h2>ルーム作成･参加</h2>
-      <div className="room-create-form">
+      <div className='room-create-form'>
         <div>
-          <input id="room-name" type="text" onChange={handleRoomNameChange} />
-          <input id="playerName" type="text" onChange={handleNameChange} />
+          <input id='room-name' type='text' onChange={handleRoomNameChange} />
+          <input id='playerName' type='text' onChange={handleNameChange} />
         </div>
         <div>
-          <button id="send-btn" type="submit" onClick={handleClick}>
+          <button id='send-btn' type='submit' onClick={handleClick}>
             作成･参加
           </button>
         </div>

@@ -5,8 +5,9 @@ import { PropTypes } from 'prop-types'
 /**
  * @param props props
  */
-const Board = (props) => {
+const Board = props => {
   const square = props.value
+
   // if (!props.value) {
   //   return
   // }
@@ -15,14 +16,14 @@ const Board = (props) => {
     <>
       {square.map((square, rowIndex) => {
         return (
-          <div className="board-row" key={rowIndex}>
+          <div className='board-row' key={rowIndex}>
             {square.map((array, colIndex) => {
               return (
                 <Square
                   key={colIndex}
                   value={array}
                   onClick={props.onClick}
-                  count={props.count}
+                  player={props.player}
                   flag={props.flag}
                   blackIsNext={props.blackIsNext}
                   className={
@@ -41,7 +42,7 @@ const Board = (props) => {
 }
 
 Board.propTypes = {
-  count: PropTypes.number,
+  player: PropTypes.number,
   reverseIndex: PropTypes.array,
   flag: PropTypes.bool,
   onClick: PropTypes.func,
