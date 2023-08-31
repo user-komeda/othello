@@ -8,82 +8,66 @@ import Room from '../room/room'
  *
  */
 const Home = () => {
-  const [inputRoomState, setInputRoomState] = useState('')
+  const [inputRoomNameState, setInputRoomNameState] = useState('')
   const [inputNameState, setInputNameState] = useState('')
-  const [map, setRoomState] = useState(new Map())
-  const [test, setTest] = useState([])
+  const [roomInfoMap, setRoomInfoMapState] = useState(new Map())
+  // eslint-disable-next-line no-unused-vars
+  const [_, setIsLoading] = useState(false)
+
   const socketRef = useRef()
 
   useEffect(() => {
-    // socketRef.current = socketIOClient(ENDPOINT)
-
-    axios.get('http://localhost').then(response => {
-      setRoomState(() => {
+    setIsLoading(true)
+    axios.get('http://localhost').then((response) => {
+      setRoomInfoMapState(() => {
         for (const dataKey of Object.keys(response.data)) {
-          map.set(dataKey, response.data[dataKey])
+          roomInfoMap.set(dataKey, response.data[dataKey])
         }
-        return map
+        return roomInfoMap
       })
-      setTest(() => {
-        const tempMap = new Map()
-        tempMap.set('test', 'tetst')
-        return tempMap
-      })
+      setIsLoading(false)
     })
   }, [])
 
   const history = useNavigate()
 
-  const handleRoomNameChange = event => {
-    setInputRoomState(event.target.value)
+  const handleRoomNameChange = (event) => {
+    setInputRoomNameState(event.target.value)
   }
 
-  const handleNameChange = event => {
+  const handleNameChange = (event) => {
     setInputNameState(event.target.value)
   }
 
   const handleClick = () => {
     const roomInfo = {
-      roomName: inputRoomState,
+      roomName: inputRoomNameState,
       playerName: inputNameState,
     }
 
-    // history.push({
-    //   pathname: `/game?${inputRoomState}`,
-    //   roomInfo: roomInfo
-    // })
-
-    history(`/game?${inputRoomState}`, {
+    history(`/game?${inputRoomNameState}`, {
       state: roomInfo,
       socket: socketRef.current,
     })
   }
 
-  // const checkGameState = () => {
-  // socketRef.current.on('change-mode', mode => {
-  //   if ((mode.mode = 'wait')) {
-  //     // 対戦相手町中
-  //   } else if ((mode.mode = 'start')) {
-  //     //大戦中
-  //   } else {
-  //     console.warn('人数オーバーです')
-  //   }
-  // })
-  // }
-
   return (
-    <div id='create-room'>
-      <Room value={map} socket={socketRef.current} test={test}></Room>
+    <div id="create-room">
+      {console.log(roomInfoMap)}
+      <Room value={roomInfoMap} socket={socketRef.current}></Room>
 
       <h1>オンラインWSリバーシ</h1>
       <h2>ルーム作成･参加</h2>
-      <div className='room-create-form'>
+      <div className="room-create-form">
         <div>
-          <input id='room-name' type='text' onChange={handleRoomNameChange} />
-          <input id='playerName' type='text' onChange={handleNameChange} />
+          <label>ルーム名称:</label>
+          <input id="roomName" type="text" onChange={handleRoomNameChange} />
+          <br />
+          <label>プレイヤーの名前:</label>
+          <input id="playerName" type="text" onChange={handleNameChange} />
         </div>
         <div>
-          <button id='send-btn' type='submit' onClick={handleClick}>
+          <button id="send-btn" type="submit" onClick={handleClick}>
             作成･参加
           </button>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer, useRef } from 'react'
 import Board from '../board/Board'
 import getClickedIndex from '../util/getClickedIndex'
-import check from '../util/findIsPutStone'
+import findCanPutStoneIndex from '../util/findIsPutStone'
 import isCheckPutStonePlace from '../util/isCheckPutStonePlace'
 import checkStoneCount from '../util/checkStoneCount'
 import '../index.css'
@@ -11,7 +11,6 @@ import getReverseIndex from '../util/getReverseIndex'
 import getDom from '../util/getDom'
 import { useLocation, useNavigate } from 'react-router-dom'
 import addCanClickId from '../util/addCanClickId'
-import { INIT_BOARD, OTHELLO_VALUE } from '../const'
 import useSocketHook from '../customHook/useSocketHook'
 let tmpRowIndex = []
 let tmpColIndex = []
@@ -42,36 +41,31 @@ const Game = () => {
   const [winner, setWinner] = useState('')
   const [squaresDom, setSquaresDom] = useReducer(test, [])
   const [jumpFlag, setJumpFlag] = useState(false)
-
-  const [
-    useWebSocketValue,
-    initialSocket,
-    domEvent,
-    exportFunctions,
-  ] = useSocketHook(socketRef, location, navigate)
+  const [useWebSocketValue, initialSocket, domEvent, exportFunctions] =
+    useSocketHook(socketRef, location, navigate)
 
   initialSocket()
   domEvent()
 
   useEffect(() => {
-    const arrayIndex = []
+    const canPutStoneIndexes = []
     const stone = useWebSocketValue.blackIsNext ? '○' : '●'
     const stepNumber = useWebSocketValue.stepNumber
     const square = useWebSocketValue.history.history[stepNumber].square
     const tmpSquaresDom =
       squaresDom.length === 0 ? getDom('.square') : squaresDom[stepNumber - 1]
-    for (const squareDom of tmpSquaresDom) {
-      squareDom.removeAttribute('id')
+    for (const dom of tmpSquaresDom) {
+      dom.removeAttribute('id')
     }
 
-    const [rowIndex, colIndex, hougaku] = check(square, stone)
-    addCanClickId(rowIndex, colIndex, arrayIndex, tmpSquaresDom)
+    const [rowIndex, colIndex, hougaku] = findCanPutStoneIndex(square, stone)
+    addCanClickId(rowIndex, colIndex, canPutStoneIndexes, tmpSquaresDom)
 
-    if (skipFlag === false && arrayIndex.length === 0) {
+    if (skipFlag === false && canPutStoneIndexes.length === 0) {
       setWinner(checkWinner(blackStoneCount, whiteStoneCount))
     }
 
-    if (arrayIndex.length === 0 && skipFlag === true) {
+    if (canPutStoneIndexes.length === 0 && skipFlag === true) {
       setSkipFlag(false)
       exportFunctions.setBlackIsNext(!useWebSocketValue.blackIsNext)
       setMessage(`${stone}スキップされました`)
@@ -89,7 +83,7 @@ const Game = () => {
     useWebSocketValue.blackIsNext ? 'white' : 'black'
   }`
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     clickFunction(event, useWebSocketValue.myStoneColor)
   }
 
@@ -137,7 +131,7 @@ const Game = () => {
       exportFunctions.setBlackIsNext(!useWebSocketValue.blackIsNext)
       exportFunctions.setStepNumber(slicedHistory.length)
       exportFunctions.setPlayer(0)
-      socketRef.current.emit('abc', {
+      socketRef.current.emit('put-piece', {
         history: changedSquares,
         notReverseHistory: notReverseSquare,
         stepNumber: stepNumber + 1,
@@ -171,8 +165,8 @@ const Game = () => {
   // }
 
   return (
-    <div className='game'>
-      <div className='game-board'>
+    <div className="game">
+      <div className="game-board">
         <Board
           value={
             jumpFlag
@@ -189,7 +183,7 @@ const Game = () => {
           blackIsNext={useWebSocketValue.blackIsNext}
         />
       </div>
-      <div className='game-info'>
+      <div className="game-info">
         <div>{status}</div>
         <p>{message}</p>
         <p>黒の石の数:{blackStoneCount}</p>
@@ -197,7 +191,7 @@ const Game = () => {
         <p>{winner}</p>
         {/* <button onClick={jump}>待った</button> */}
       </div>
-      <div className='box'></div>
+      <div className="box"></div>
     </div>
   )
 }

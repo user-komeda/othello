@@ -3,20 +3,22 @@ import { useNavigate } from 'react-router-dom'
 
 /**
  *
- * @param props
+ * @param props room情報(playerName,roomName)
  */
 const Room = (props) => {
   const navigate = useNavigate()
-
   const roomObjectList = []
   // eslint-disable-next-line react/prop-types
   for (const value of props.value) {
+    // valueIndex=1
     roomObjectList.push(value[1].roomObject)
   }
+
   const handleClick = (event) => {
     const targetElement = event.currentTarget
-    const playerName = targetElement.childNodes[0].textContent
-    const roomName = targetElement.childNodes[1].textContent
+    console.log(targetElement)
+    const roomName = targetElement.querySelector('#roomName').textContent
+    const playerName = targetElement.querySelector('#playerName').textContent
     const roomInfo = {
       roomName: roomName,
       playerName: playerName,
@@ -28,6 +30,7 @@ const Room = (props) => {
 
   return (
     <div>
+      {/* 重複削除 */}
       {roomObjectList.map((roomObject, key, roomObjectList) => {
         if (
           key > 0 &&
@@ -38,9 +41,9 @@ const Room = (props) => {
         return (
           <div key={key} onClick={handleClick}>
             <span>playerName:</span>
-            <span>{roomObject.playerName}</span>
+            <spa id="playerName">{roomObject.playerName}</spa>
             <span>roomName:</span>
-            <span>{roomObject.roomName}</span>
+            <span id="roomName">{roomObject.roomName}</span>
           </div>
         )
       })}

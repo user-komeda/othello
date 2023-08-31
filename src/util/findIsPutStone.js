@@ -1,15 +1,17 @@
+import { OTHELLO_COL_SIZE, OTHELLO_ROW_SIZE } from '../const'
+
 /**
- * すべてのマスに対して石を置くことができるか調べる
+ * 石を置くことができる座標をすべて取得
  *
  * @param {Array<string[]>} square 現在の盤面の石の状態
  * @param {string} stone おこうとしている石
  */
-const check = (square, stone) => {
+const findCanPutStoneIndex = (square, stone) => {
   const rowIndex = []
   const colIndex = []
   const hougaku = []
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
+  for (let i = 0; i < OTHELLO_ROW_SIZE; i++) {
+    for (let j = 0; j < OTHELLO_COL_SIZE; j++) {
       if (square[i][j] === '') {
         const tmpHougaku = checkNext(i, j, stone, square)
         if (tmpHougaku !== null && tmpHougaku.length !== 0) {
@@ -175,4 +177,4 @@ const checkHougaku = (i, j) => {
       break
   }
 }
-export default check
+export default findCanPutStoneIndex

@@ -24,7 +24,7 @@ const useSocketHook = (socketRef, location, navigate) => {
   const [useWebSocketValue, setUseWebSocketValue] = useState(
     // OTHELLO_VALUE
     Object.keys(OTHELLO_VALUE)
-      .filter(value => {
+      .filter((value) => {
         return useWebSocketValueKey.includes(value)
       })
       .reduce((obj, value) => {
@@ -39,7 +39,7 @@ const useSocketHook = (socketRef, location, navigate) => {
     useEffect(() => {
       const element = getDom('.square')
       for (const elm of element) {
-        elm.addEventListener('transitionend', event => {
+        elm.addEventListener('transitionend', (event) => {
           if (/test/.test(event.target.parentNode.className)) {
             setTimeout(() => {
               event.target.parentNode.children[1].classList.add('none')
@@ -53,8 +53,8 @@ const useSocketHook = (socketRef, location, navigate) => {
     }, [])
   }
 
-  const setHistoryValue = value => {
-    setUseWebSocketValue(prev => {
+  const setHistoryValue = (value) => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
       const slicedHistory = JSON.parse(
         JSON.stringify(
@@ -69,18 +69,18 @@ const useSocketHook = (socketRef, location, navigate) => {
     })
   }
 
-  const setMyStoneColor = value => {
-    setUseWebSocketValue(prev => {
+  const setMyStoneColor = (value) => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
       updateValue.myStoneColor = value
       return updateValue
     })
   }
 
-  const setNotReverseHistory = value => {
+  const setNotReverseHistory = (value) => {
     console.log(useWebSocketValue)
 
-    setUseWebSocketValue(prev => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
 
       const notReverseSlicedHistory = JSON.parse(
@@ -98,32 +98,32 @@ const useSocketHook = (socketRef, location, navigate) => {
     })
   }
 
-  const setStepNumber = value => {
-    setUseWebSocketValue(prev => {
+  const setStepNumber = (value) => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
       updateValue.stepNumber = value
       return updateValue
     })
   }
 
-  const setBlackIsNext = value => {
-    setUseWebSocketValue(prev => {
+  const setBlackIsNext = (value) => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
       updateValue.blackIsNext = value
       return updateValue
     })
   }
 
-  const setReverseIndex = value => {
-    setUseWebSocketValue(prev => {
+  const setReverseIndex = (value) => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
       updateValue.reverseIndex = value
       return updateValue
     })
   }
 
-  const setPlayer = value => {
-    setUseWebSocketValue(prev => {
+  const setPlayer = (value) => {
+    setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
       updateValue.player = value
 
@@ -146,9 +146,9 @@ const useSocketHook = (socketRef, location, navigate) => {
         playerName: playerName,
       })
 
-      socketRef.current.on('disconnect', reason => {})
+      socketRef.current.on('disconnect', (reason) => {})
 
-      socketRef.current.on('change-mode', roomObject => {
+      socketRef.current.on('change-mode', (roomObject) => {
         const stoneColor = roomObject.blackIsNext ? '○' : '●'
         setMyStoneColor(stoneColor)
       })
@@ -157,13 +157,14 @@ const useSocketHook = (socketRef, location, navigate) => {
         navigate(-1)
       })
 
-      socketRef.current.on('update-piece', value => {
-        setHistoryValue(value.value.history)
-        setNotReverseHistory(value.value.notReverseHistory)
+      socketRef.current.on('update-piece', (value) => {
+        console.log(value)
+        setHistoryValue(value.history)
+        setNotReverseHistory(value.notReverseHistory)
 
-        setStepNumber(value.value.stepNumber)
-        setBlackIsNext(!value.value.blackIsNext)
-        setReverseIndex(value.value.reverseIndex)
+        setStepNumber(value.stepNumber)
+        setBlackIsNext(!value.blackIsNext)
+        setReverseIndex(value.reverseIndex)
         setPlayer(1)
         // setUpdata(update ? false : true)
       })
