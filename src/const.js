@@ -39,7 +39,7 @@ export const OTHELLO_VALUE = {
   stepNumber: 0,
   jumpFlag: false,
   notReverseHistory: {
-    notReverseHistory: [
+    body: [
       {
         notReverseSquare: INIT_BOARD,
       },
@@ -47,7 +47,7 @@ export const OTHELLO_VALUE = {
   },
   reverseIndex: [],
   history: {
-    history: [
+    body: [
       {
         square: INIT_BOARD,
       },

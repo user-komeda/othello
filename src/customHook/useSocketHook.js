@@ -58,12 +58,12 @@ const useSocketHook = (socketRef, location, navigate) => {
       const updateValue = Object.assign({}, prev)
       const slicedHistory = JSON.parse(
         JSON.stringify(
-          prev.notReverseHistory.notReverseHistory.slice(0, prev.stepNumber + 1)
+          prev.notReverseHistory.body.slice(0, prev.stepNumber + 1)
         )
       )
 
       updateValue.history = {
-        history: slicedHistory.concat([{ square: value }]),
+        body: slicedHistory.concat([{ square: value }]),
       }
       return updateValue
     })
@@ -78,21 +78,17 @@ const useSocketHook = (socketRef, location, navigate) => {
   }
 
   const setNotReverseHistory = (value) => {
-    console.log(useWebSocketValue)
-
     setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
 
       const notReverseSlicedHistory = JSON.parse(
         JSON.stringify(
-          prev.notReverseHistory.notReverseHistory.slice(0, prev.stepNumber + 1)
+          prev.notReverseHistory.body.slice(0, prev.stepNumber + 1)
         )
       )
       console.log(notReverseSlicedHistory)
       updateValue.notReverseHistory = {
-        notReverseHistory: notReverseSlicedHistory.concat([
-          { notReverseSquare: value },
-        ]),
+        body: notReverseSlicedHistory.concat([{ notReverseSquare: value }]),
       }
       return updateValue
     })

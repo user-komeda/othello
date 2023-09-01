@@ -51,7 +51,7 @@ const Game = () => {
     const canPutStoneIndexes = []
     const stone = useWebSocketValue.blackIsNext ? '○' : '●'
     const stepNumber = useWebSocketValue.stepNumber
-    const square = useWebSocketValue.history.history[stepNumber].square
+    const square = useWebSocketValue.history.body[stepNumber].square
     const tmpSquaresDom =
       squaresDom.length === 0 ? getDom('.square') : squaresDom[stepNumber - 1]
     for (const dom of tmpSquaresDom) {
@@ -96,7 +96,7 @@ const Game = () => {
     }
     const stepNumber = useWebSocketValue.stepNumber
     const slicedHistory = JSON.parse(
-      JSON.stringify(useWebSocketValue.history.history.slice(0, stepNumber + 1))
+      JSON.stringify(useWebSocketValue.history.body.slice(0, stepNumber + 1))
     )
 
     const currant = JSON.parse(
@@ -120,7 +120,7 @@ const Game = () => {
       )
       const reverseIndexes = getReverseIndex(
         stone,
-        useWebSocketValue.history.history[stepNumber].square,
+        useWebSocketValue.history.body[stepNumber].square,
         changedSquares
       )
       setSkipFlag(true)
@@ -172,7 +172,7 @@ const Game = () => {
             jumpFlag
               ? useWebSocketValue.history.history[useWebSocketValue.stepNumber]
                   .square
-              : useWebSocketValue.notReverseHistory.notReverseHistory[
+              : useWebSocketValue.notReverseHistory.body[
                   useWebSocketValue.stepNumber
                 ].notReverseSquare
           }
