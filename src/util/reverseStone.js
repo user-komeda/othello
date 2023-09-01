@@ -6,7 +6,7 @@
  * @param hougaku ひっくり返す方角
  * @param rowIndex 行index
  * @param colIndex 列index
- * @param square オセロの盤面
+ * @param boardInfo オセロの盤面
  * @param stone オセロの石
  */
 const reverseStone = (
@@ -15,11 +15,11 @@ const reverseStone = (
   hougaku,
   rowIndex,
   colIndex,
-  square,
+  boardInfo,
   stone
 ) => {
-  const notReverseStone = JSON.parse(JSON.stringify(square))
-  notReverseStone[clickedRowIndex][clickedColIndex] = stone
+  const notReversedBoardInfo = JSON.parse(JSON.stringify(boardInfo))
+  notReversedBoardInfo[clickedRowIndex][clickedColIndex] = stone
   const rowIndexMatch = []
   rowIndex.map((val, index) => {
     if (val === clickedRowIndex) {
@@ -52,17 +52,19 @@ const reverseStone = (
       colIndexChange,
       clickedRowIndex,
       clickedColIndex,
-      square,
+      boardInfo,
       stone
     )
     // eslint-disable-next-line no-unused-vars
     for (const _ of array) {
-      square[clickedRowIndex + rowChange][clickedColIndex + colChange] = stone
+      boardInfo[clickedRowIndex + rowChange][clickedColIndex + colChange] =
+        stone
       rowChange += rowIndexChange
       colChange += colIndexChange
     }
   }
-  return [square, notReverseStone]
+
+  return [boardInfo, notReversedBoardInfo]
 }
 
 const convertHougaku = (hougaku) => {
@@ -115,7 +117,7 @@ const checkReverse = (
   colIndexChange,
   clickedRowIndex,
   clickedColIndex,
-  square,
+  boardInfo,
   stone
 ) => {
   const array = []
@@ -127,7 +129,9 @@ const checkReverse = (
     clickedColIndex + colChange >= 0 &&
     clickedColIndex + colChange <= 7
   ) {
-    array.push(square[clickedRowIndex + rowChange][clickedColIndex + colChange])
+    array.push(
+      boardInfo[clickedRowIndex + rowChange][clickedColIndex + colChange]
+    )
     rowChange += rowIndexChange
     colChange += colIndexChange
   }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { OTHELLO_VALUE, useWebSocketValueKey } from '../const'
 import socketIOClient from 'socket.io-client'
 const ENDPOINT = 'http://localhost:80'
@@ -13,9 +13,9 @@ import getDom from '../util/getDom'
  */
 const useSocketHook = (socketRef, location, navigate) => {
   /**
-   *'history',
+   *'boardHistory',
    *'myStoneColor',
-   *'notReverseHistory',
+   *'notReversedBoardHistory',
    *'stepNumber',
    *'blackIsNext',
    *'reverseIndex',
@@ -31,9 +31,6 @@ const useSocketHook = (socketRef, location, navigate) => {
         return Object.assign(obj, { [value]: OTHELLO_VALUE[value] })
       }, {})
   )
-
-  const [update, setUpdata] = useState(false)
-  // レンダリングしたい場所でこれを差し込むだけ
 
   const domEvent = () => {
     useEffect(() => {
@@ -56,14 +53,14 @@ const useSocketHook = (socketRef, location, navigate) => {
   const setHistoryValue = (value) => {
     setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
-      const slicedHistory = JSON.parse(
+      const slicesBoardHistory = JSON.parse(
         JSON.stringify(
-          prev.notReverseHistory.body.slice(0, prev.stepNumber + 1)
+          prev.notReversedBoardHistory.body.slice(0, prev.stepNumber + 1)
         )
       )
 
-      updateValue.history = {
-        body: slicedHistory.concat([{ square: value }]),
+      updateValue.boardHistory = {
+        body: slicesBoardHistory.concat([{ boardInfo: value }]),
       }
       return updateValue
     })
@@ -81,14 +78,16 @@ const useSocketHook = (socketRef, location, navigate) => {
     setUseWebSocketValue((prev) => {
       const updateValue = Object.assign({}, prev)
 
-      const notReverseSlicedHistory = JSON.parse(
+      const notReversedSlicedBoardHistory = JSON.parse(
         JSON.stringify(
-          prev.notReverseHistory.body.slice(0, prev.stepNumber + 1)
+          prev.notReversedBoardHistory.body.slice(0, prev.stepNumber + 1)
         )
       )
-      console.log(notReverseSlicedHistory)
-      updateValue.notReverseHistory = {
-        body: notReverseSlicedHistory.concat([{ notReverseSquare: value }]),
+      console.log(notReversedSlicedBoardHistory)
+      updateValue.notReversedBoardHistory = {
+        body: notReversedSlicedBoardHistory.concat([
+          { notReversedBoardInfo: value },
+        ]),
       }
       return updateValue
     })
@@ -155,8 +154,8 @@ const useSocketHook = (socketRef, location, navigate) => {
 
       socketRef.current.on('update-piece', (value) => {
         console.log(value)
-        setHistoryValue(value.history)
-        setNotReverseHistory(value.notReverseHistory)
+        setHistoryValue(value.boardHistory)
+        setNotReverseHistory(value.notReversedBoardHistory)
 
         setStepNumber(value.stepNumber)
         setBlackIsNext(!value.blackIsNext)

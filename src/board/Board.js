@@ -5,19 +5,15 @@ import { PropTypes } from 'prop-types'
 /**
  * @param props props
  */
-const Board = props => {
-  const square = props.value
-
-  // if (!props.value) {
-  //   return
-  // }
-
+const Board = (props) => {
+  const boardInfo = props.value
+  console.log(boardInfo)
   return (
     <>
-      {square.map((square, rowIndex) => {
+      {boardInfo.map((boardInfo, rowIndex) => {
         return (
-          <div className='board-row' key={rowIndex}>
-            {square.map((array, colIndex) => {
+          <div className="board-row" key={rowIndex}>
+            {boardInfo.map((array, colIndex) => {
               return (
                 <Square
                   key={colIndex}

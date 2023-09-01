@@ -17,9 +17,9 @@ export const INIT_BOARD = [
 
 export const useWebSocketValueKey = [
   'a',
-  'history',
+  'boardHistory',
   'myStoneColor',
-  'notReverseHistory',
+  'notReversedBoardHistory',
   'stepNumber',
   'blackIsNext',
   'reverseIndex',
@@ -38,18 +38,18 @@ export const OTHELLO_VALUE = {
   squaresDom: null,
   stepNumber: 0,
   jumpFlag: false,
-  notReverseHistory: {
+  notReversedBoardHistory: {
     body: [
       {
-        notReverseSquare: INIT_BOARD,
+        notReversedBoardInfo: INIT_BOARD,
       },
     ],
   },
   reverseIndex: [],
-  history: {
+  boardHistory: {
     body: [
       {
-        square: INIT_BOARD,
+        boardInfo: INIT_BOARD,
       },
     ],
   },
