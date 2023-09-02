@@ -6,10 +6,9 @@ import getDom from '../util/getDom'
 
 /**
  *
- * @param {*} socketRef
- * @param {*} location
- * @param {*} navigate
- * @returns
+ * @param {*} socketRef socketRef
+ * @param {*} location location
+ * @param {*} navigate navigate
  */
 const useSocketHook = (socketRef, location, navigate) => {
   /**
@@ -20,6 +19,7 @@ const useSocketHook = (socketRef, location, navigate) => {
    *'blackIsNext',
    *'reverseIndex',
    *'player',
+   *'isGameStart',
    */
   const [useWebSocketValue, setUseWebSocketValue] = useState(
     // OTHELLO_VALUE
@@ -83,7 +83,6 @@ const useSocketHook = (socketRef, location, navigate) => {
           prev.notReversedBoardHistory.body.slice(0, prev.stepNumber + 1)
         )
       )
-      console.log(notReversedSlicedBoardHistory)
       updateValue.notReversedBoardHistory = {
         body: notReversedSlicedBoardHistory.concat([
           { notReversedBoardInfo: value },
@@ -135,7 +134,7 @@ const useSocketHook = (socketRef, location, navigate) => {
 
       const roomName = location.state.roomName
       const playerName = location.state.playerName
-
+      console.log('join')
       socketRef.current.emit('join-room', {
         roomName: roomName,
         playerName: playerName,
@@ -146,22 +145,38 @@ const useSocketHook = (socketRef, location, navigate) => {
       socketRef.current.on('change-mode', (roomObject) => {
         const stoneColor = roomObject.blackIsNext ? '○' : '●'
         setMyStoneColor(stoneColor)
+        if (roomObject.mode === 'start') {
+          setUseWebSocketValue((prev) => {
+            const updateValue = Object.assign({}, prev)
+            updateValue.isGameStart = true
+            return updateValue
+          })
+          console.log('start')
+          socketRef.current.emit('change-mode-start', {
+            isGameStart: true,
+          })
+        }
       })
 
       socketRef.current.on('over-notice', () => {
         navigate(-1)
       })
 
+      socketRef.current.on('change-mode-start', (isGameStart) => {
+        setUseWebSocketValue((prev) => {
+          const updateValue = Object.assign({}, prev)
+          updateValue.isGameStart = true
+          return updateValue
+        })
+      })
+
       socketRef.current.on('update-piece', (value) => {
-        console.log(value)
         setHistoryValue(value.boardHistory)
         setNotReverseHistory(value.notReversedBoardHistory)
-
         setStepNumber(value.stepNumber)
         setBlackIsNext(!value.blackIsNext)
         setReverseIndex(value.reverseIndex)
         setPlayer(1)
-        // setUpdata(update ? false : true)
       })
     }, [])
   }

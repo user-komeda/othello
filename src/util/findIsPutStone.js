@@ -1,4 +1,13 @@
 import { OTHELLO_COL_SIZE, OTHELLO_ROW_SIZE } from '../const'
+const BOTTOM_LEFT = 0
+const BOTTOM_MIDDLE = 1
+const BOTTOM_RIGHT = 2
+const LEFT = 3
+const MIDDLE = 4
+const RIGHT = 5
+const TOP_LEFT = 6
+const TOP_MIDDLE = 7
+const TOP_RIGHT = 8
 
 /**
  * 石を置くことができる座標をすべて取得
@@ -79,7 +88,7 @@ const checkNext = (rowIndex, colIndex, stone, boardInfo) => {
  */
 
 const getCheckedStone = (stone, i, j, boardInfo, rowIndex, colIndex) => {
-  const array = []
+  const stones = []
   let ix = i
   let jx = j
 
@@ -89,27 +98,25 @@ const getCheckedStone = (stone, i, j, boardInfo, rowIndex, colIndex) => {
     colIndex + jx >= 0 &&
     colIndex + jx <= 7
   ) {
-    array.push(boardInfo[rowIndex + ix][colIndex + jx])
+    stones.push(boardInfo[rowIndex + ix][colIndex + jx])
     ix += i
     jx += j
   }
-  return checkArrayStone(array, stone)
+  return checkArrayStone(stones, stone)
 }
 
-//
 /**
  *石が置けるか確認
  *
- * @param {Array<string[]>} array 配列
+ * @param {Array<string[]>} stones 取得したすべての石
  * @param {string} stone おこうとしている石
  */
-const checkArrayStone = (array, stone) => {
-  const filteredArray = array
+const checkArrayStone = (stones, stone) => {
+  const filteredArray = stones
   const firstIndex = filteredArray.indexOf(stone)
   if (firstIndex === 1) {
     return true
   }
-  const flag = true
   if (firstIndex !== -1) {
     filteredArray.length = firstIndex
     for (let i = 0; i < filteredArray.length; i++) {
@@ -117,12 +124,7 @@ const checkArrayStone = (array, stone) => {
         return false
       }
     }
-
-    if (flag === true) {
-      return true
-    } else {
-      return false
-    }
+    return true
   } else {
     return false
   }
@@ -139,11 +141,11 @@ const checkHougaku = (i, j) => {
     case -1:
       switch (j) {
         case -1:
-          return 0
+          return BOTTOM_LEFT
         case 0:
-          return 1
+          return BOTTOM_MIDDLE
         case 1:
-          return 2
+          return BOTTOM_RIGHT
         default:
           break
       }
@@ -152,11 +154,11 @@ const checkHougaku = (i, j) => {
     case 0:
       switch (j) {
         case -1:
-          return 3
+          return LEFT
         case 0:
-          return 4
+          return MIDDLE
         case 1:
-          return 5
+          return RIGHT
         default:
           break
       }
@@ -165,11 +167,11 @@ const checkHougaku = (i, j) => {
     case 1:
       switch (j) {
         case -1:
-          return 6
+          return TOP_LEFT
         case 0:
-          return 7
+          return TOP_MIDDLE
         case 1:
-          return 8
+          return TOP_RIGHT
         default:
           break
       }

@@ -1,5 +1,3 @@
-/* global process*/
-
 import React, { useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import { PropTypes } from 'prop-types'
@@ -7,9 +5,11 @@ import { PropTypes } from 'prop-types'
 /**
  * @param props a
  */
-const Square = props => {
+const Square = (props) => {
   const element = useRef(null)
+  // eslint-disable-next-line no-undef
   const WHITE_COMA = `${process.env.PUBLIC_URL}img/disk_blue.png`
+  // eslint-disable-next-line no-undef
   const BLACK_COMA = `${process.env.PUBLIC_URL}img/disk_pink.png`
   const coma = props.value === '●' ? BLACK_COMA : WHITE_COMA
 
@@ -19,14 +19,12 @@ const Square = props => {
 
     if (props.flag && element.current.children[0].firstChild && props.flag) {
       // 表画像の属性取得
-      const frontImgSrc = element.current.children[0].firstChild.getAttribute(
-        'src'
-      )
+      const frontImgSrc =
+        element.current.children[0].firstChild.getAttribute('src')
 
       // 裏画像の属性取得
-      const backImgSrc = element.current.children[1].firstChild.getAttribute(
-        'src'
-      )
+      const backImgSrc =
+        element.current.children[1].firstChild.getAttribute('src')
 
       // アニメーション設定
       switch (props.blackIsNext ? '○' : '●') {
@@ -87,12 +85,12 @@ const Square = props => {
       className={classNames('square')}
       onClick={props.onClick}
     >
-      <div className='front'>
+      <div className="front">
         {props.value && (
           <img src={coma === BLACK_COMA ? WHITE_COMA : BLACK_COMA} />
         )}
       </div>
-      <div className='back'>{props.value && <img src={coma} />}</div>
+      <div className="back">{props.value && <img src={coma} />}</div>
     </button>
   )
 }
@@ -103,7 +101,7 @@ Square.propTypes = {
   flag: PropTypes.bool,
   onClick: PropTypes.func,
   blackIsNext: PropTypes.bool,
-  value: PropTypes.array,
+  value: PropTypes.string,
 }
 
 export default Square

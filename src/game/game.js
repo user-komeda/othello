@@ -16,17 +16,14 @@ let tmpCanPutStoneRowIndexes = []
 let tmpCanPutStoneColIndexes = []
 let tmpHougaku = []
 /**
- *
- * @param root0
- * @param root0.route
- * @param root0.navigation
+ * game画面描画
  */
 const Game = () => {
   const socketRef = useRef()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const test = (state, selector) => {
+  const getDomReducer = (state, selector) => {
     if (state === undefined) {
       return
     } else {
@@ -39,14 +36,13 @@ const Game = () => {
   const [skipFlag, setSkipFlag] = useState(true)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
-  const [squaresDom, setSquaresDom] = useReducer(test, [])
+  const [squaresDom, setSquaresDom] = useReducer(getDomReducer, [])
   const [jumpFlag, setJumpFlag] = useState(false)
   const [useWebSocketValue, initialSocket, domEvent, exportFunctions] =
     useSocketHook(socketRef, location, navigate)
-
+  console.log('game')
   initialSocket()
   domEvent()
-
   useEffect(() => {
     const canPutStoneIndexes = []
     const stone = useWebSocketValue.blackIsNext ? '○' : '●'
@@ -97,7 +93,8 @@ const Game = () => {
     setMessage('')
 
     const stone = useWebSocketValue.blackIsNext ? '○' : '●'
-    if (stone !== myStoneColor) {
+    console.log(useWebSocketValue.isGameStart)
+    if (stone !== myStoneColor || !useWebSocketValue.isGameStart) {
       return
     }
     const stepNumber = useWebSocketValue.stepNumber
@@ -174,7 +171,6 @@ const Game = () => {
 
   return (
     <div className="game">
-      {console.dir(useWebSocketValue)}
       <div className="game-board">
         <Board
           value={

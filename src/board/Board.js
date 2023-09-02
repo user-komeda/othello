@@ -7,7 +7,6 @@ import { PropTypes } from 'prop-types'
  */
 const Board = (props) => {
   const boardInfo = props.value
-  console.log(boardInfo)
   return (
     <>
       {boardInfo.map((boardInfo, rowIndex) => {

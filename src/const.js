@@ -16,7 +16,6 @@ export const INIT_BOARD = [
 ]
 
 export const useWebSocketValueKey = [
-  'a',
   'boardHistory',
   'myStoneColor',
   'notReversedBoardHistory',
@@ -24,9 +23,9 @@ export const useWebSocketValueKey = [
   'blackIsNext',
   'reverseIndex',
   'player',
+  'isGameStart',
 ]
 export const OTHELLO_VALUE = {
-  a: '',
   blackIsNext: false,
   myStoneColor: null,
   blackStoneCount: 0,
@@ -53,4 +52,5 @@ export const OTHELLO_VALUE = {
       },
     ],
   },
+  isGameStart: false,
 }

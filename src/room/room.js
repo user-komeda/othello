@@ -16,7 +16,6 @@ const Room = (props) => {
 
   const handleClick = (event) => {
     const targetElement = event.currentTarget
-    console.log(targetElement)
     const roomName = targetElement.querySelector('#roomName').textContent
     const playerName = targetElement.querySelector('#playerName').textContent
     const roomInfo = {
@@ -41,7 +40,7 @@ const Room = (props) => {
         return (
           <div key={key} onClick={handleClick}>
             <span>playerName:</span>
-            <spa id="playerName">{roomObject.playerName}</spa>
+            <span id="playerName">{roomObject.playerName}</span>
             <span>roomName:</span>
             <span id="roomName">{roomObject.roomName}</span>
           </div>

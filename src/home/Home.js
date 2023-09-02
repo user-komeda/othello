@@ -53,7 +53,6 @@ const Home = () => {
 
   return (
     <div id="create-room">
-      {console.log(roomInfoMap)}
       <Room value={roomInfoMap} socket={socketRef.current}></Room>
 
       <h1>オンラインWSリバーシ</h1>
