@@ -1,5 +1,3 @@
-/* global process*/
-
 import React, { useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import { PropTypes } from 'prop-types'
@@ -9,19 +7,16 @@ import { PropTypes } from 'prop-types'
  */
 const Square = (props) => {
   const element = useRef(null)
+  // eslint-disable-next-line no-undef
   const WHITE_COMA = `${process.env.PUBLIC_URL}img/disk_blue.png`
+  // eslint-disable-next-line no-undef
   const BLACK_COMA = `${process.env.PUBLIC_URL}img/disk_pink.png`
-  let coma = ''
-  if (props.value === '●') {
-    coma = BLACK_COMA
-  } else if (props.value === '○') {
-    coma = WHITE_COMA
-  }
+  const coma = props.value === '●' ? BLACK_COMA : WHITE_COMA
 
   // アニメーション設定
   useEffect(() => {
     element.current.classList.remove('test')
-    console.log('insert')
+
     if (props.flag && element.current.children[0].firstChild && props.flag) {
       // 表画像の属性取得
       const frontImgSrc =
@@ -69,7 +64,6 @@ const Square = (props) => {
           break
       }
     } else {
-      console.log('insert')
       if (element.current.children[1].classList.contains('none')) {
         if (/none/.test(element.current.children[1].classList[1])) {
           element.current.children[1].classList.add('transition_none')
@@ -83,7 +77,7 @@ const Square = (props) => {
         }, 200)
       }
     }
-  }, [props.count])
+  }, [props.player])
 
   return (
     <button
@@ -102,12 +96,12 @@ const Square = (props) => {
 }
 
 Square.propTypes = {
-  count: PropTypes.number,
+  player: PropTypes.number,
   className: PropTypes.string,
   flag: PropTypes.bool,
   onClick: PropTypes.func,
   blackIsNext: PropTypes.bool,
-  value: PropTypes.array,
+  value: PropTypes.string,
 }
 
 export default Square

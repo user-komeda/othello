@@ -1,28 +1,39 @@
+import { OTHELLO_COL_SIZE, OTHELLO_ROW_SIZE } from '../const'
+const BOTTOM_LEFT = 0
+const BOTTOM_MIDDLE = 1
+const BOTTOM_RIGHT = 2
+const LEFT = 3
+const MIDDLE = 4
+const RIGHT = 5
+const TOP_LEFT = 6
+const TOP_MIDDLE = 7
+const TOP_RIGHT = 8
+
 /**
- * すべてのマスに対して石を置くことができるか調べる
+ * 石を置くことができる座標をすべて取得
  *
- * @param {Array<string[]>} square 現在の盤面の石の状態
+ * @param {Array<string[]>} boardInfo 現在の盤面の石の状態
  * @param {string} stone おこうとしている石
  */
-const check = (square, stone) => {
-  const rowIndex = []
-  const colIndex = []
+const findCanPutStoneIndex = (boardInfo, stone) => {
+  const rowIndexes = []
+  const colIndexes = []
   const hougaku = []
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      if (square[i][j] === '') {
-        const tmpHougaku = checkNext(i, j, stone, square)
+  for (let i = 0; i < OTHELLO_ROW_SIZE; i++) {
+    for (let j = 0; j < OTHELLO_COL_SIZE; j++) {
+      if (boardInfo[i][j] === '') {
+        const tmpHougaku = checkNext(i, j, stone, boardInfo)
         if (tmpHougaku !== null && tmpHougaku.length !== 0) {
           hougaku.push(tmpHougaku)
-          rowIndex.push(i)
-          colIndex.push(j)
+          rowIndexes.push(i)
+          colIndexes.push(j)
         }
       } else {
         continue
       }
     }
   }
-  return [rowIndex, colIndex, hougaku]
+  return [rowIndexes, colIndexes, hougaku]
 }
 
 /**
@@ -31,13 +42,14 @@ const check = (square, stone) => {
  * @param {*} rowIndex 盤面の行座標
  * @param {*} colIndex 盤面の列座標
  * @param {*} stone おこうとしている石
- * @param {*} square 現在の盤面の石の状態
+ * @param {*} boardInfo 現在の盤面の石の状態
  */
-const checkNext = (rowIndex, colIndex, stone, square) => {
+const checkNext = (rowIndex, colIndex, stone, boardInfo) => {
   const hougaku = []
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       if (
+        // オセロのマスからはみ出ている場合スキップ
         rowIndex + i < 0 ||
         rowIndex + i > 7 ||
         colIndex + j < 0 ||
@@ -46,15 +58,16 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
         continue
       }
       if (
-        square[rowIndex + i][colIndex + j] === '' ||
-        square[rowIndex + i][colIndex + j] === stone
+        // 石が置かれてないもしくは同じ色の石があればスキップ
+        boardInfo[rowIndex + i][colIndex + j] === '' ||
+        boardInfo[rowIndex + i][colIndex + j] === stone
       ) {
         continue
       }
       if (i === 0 && j === 0) {
         continue
       }
-      if (getCheckedStone(stone, i, j, square, rowIndex, colIndex)) {
+      if (getCheckedStone(stone, i, j, boardInfo, rowIndex, colIndex)) {
         const index = checkHougaku(i, j)
         hougaku.push(index)
       }
@@ -69,13 +82,13 @@ const checkNext = (rowIndex, colIndex, stone, square) => {
  * @param {string} stone おこうとしている石
  * @param {number} i 行方向への増加量
  * @param {number} j 列方向への増加量
- * @param {Array<string[]>} square 現在の盤面の石の状態
+ * @param {Array<string[]>} boardInfo 現在の盤面の石の状態
  * @param {number} rowIndex 盤面の行座標
  * @param {number} colIndex 盤面の列座標
  */
 
-const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
-  const array = []
+const getCheckedStone = (stone, i, j, boardInfo, rowIndex, colIndex) => {
+  const stones = []
   let ix = i
   let jx = j
 
@@ -85,27 +98,25 @@ const getCheckedStone = (stone, i, j, square, rowIndex, colIndex) => {
     colIndex + jx >= 0 &&
     colIndex + jx <= 7
   ) {
-    array.push(square[rowIndex + ix][colIndex + jx])
+    stones.push(boardInfo[rowIndex + ix][colIndex + jx])
     ix += i
     jx += j
   }
-  return checkArrayStone(array, stone)
+  return checkArrayStone(stones, stone)
 }
 
-//
 /**
  *石が置けるか確認
  *
- * @param {Array<string[]>} array 配列
+ * @param {Array<string[]>} stones 取得したすべての石
  * @param {string} stone おこうとしている石
  */
-const checkArrayStone = (array, stone) => {
-  const filteredArray = array
+const checkArrayStone = (stones, stone) => {
+  const filteredArray = stones
   const firstIndex = filteredArray.indexOf(stone)
   if (firstIndex === 1) {
     return true
   }
-  const flag = true
   if (firstIndex !== -1) {
     filteredArray.length = firstIndex
     for (let i = 0; i < filteredArray.length; i++) {
@@ -113,12 +124,7 @@ const checkArrayStone = (array, stone) => {
         return false
       }
     }
-
-    if (flag === true) {
-      return true
-    } else {
-      return false
-    }
+    return true
   } else {
     return false
   }
@@ -135,11 +141,11 @@ const checkHougaku = (i, j) => {
     case -1:
       switch (j) {
         case -1:
-          return 0
+          return BOTTOM_LEFT
         case 0:
-          return 1
+          return BOTTOM_MIDDLE
         case 1:
-          return 2
+          return BOTTOM_RIGHT
         default:
           break
       }
@@ -148,11 +154,11 @@ const checkHougaku = (i, j) => {
     case 0:
       switch (j) {
         case -1:
-          return 3
+          return LEFT
         case 0:
-          return 4
+          return MIDDLE
         case 1:
-          return 5
+          return RIGHT
         default:
           break
       }
@@ -161,11 +167,11 @@ const checkHougaku = (i, j) => {
     case 1:
       switch (j) {
         case -1:
-          return 6
+          return TOP_LEFT
         case 0:
-          return 7
+          return TOP_MIDDLE
         case 1:
-          return 8
+          return TOP_RIGHT
         default:
           break
       }
@@ -175,4 +181,4 @@ const checkHougaku = (i, j) => {
       break
   }
 }
-export default check
+export default findCanPutStoneIndex

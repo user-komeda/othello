@@ -1,31 +1,29 @@
 import React, { useState, useEffect, useReducer, useRef } from 'react'
 import Board from '../board/Board'
-import INIT_BOARD from '../util/initBoard'
 import getClickedIndex from '../util/getClickedIndex'
-import check from '../util/findIsPutStone'
+import findCanPutStoneIndex from '../util/findIsPutStone'
 import isCheckPutStonePlace from '../util/isCheckPutStonePlace'
 import checkStoneCount from '../util/checkStoneCount'
 import '../index.css'
 import checkWinner from '../util/checkWinner'
 import reverseStone from '../util/reverseStone'
-import addAnimationId from '../util/addAnimationId'
+import getReverseIndex from '../util/getReverseIndex'
 import getDom from '../util/getDom'
-import socketIOClient from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
-const ENDPOINT = 'http://localhost:80'
-
+import addCanClickId from '../util/addCanClickId'
+import useSocketHook from '../customHook/useSocketHook'
+let tmpCanPutStoneRowIndexes = []
+let tmpCanPutStoneColIndexes = []
+let tmpHougaku = []
 /**
- *
- * @param root0
- * @param root0.route
- * @param root0.navigation
+ * game画面描画
  */
 const Game = () => {
   const socketRef = useRef()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const test = (state, selector) => {
+  const getDomReducer = (state, selector) => {
     if (state === undefined) {
       return
     } else {
@@ -33,253 +31,162 @@ const Game = () => {
     }
   }
 
-  const [rowIndex, setRowIndex] = useState()
-  const [colIndex, setColIndex] = useState()
-  const [hougaku, setHougaku] = useState()
-  const [blackIsNext, setBlackIsNext] = useState(false)
-  const [myStoneColor, setMyStoneColor] = useState()
-  // const [status, setStatus] = useState()
   const [blackStoneCount, setBlackStoneCount] = useState(0)
   const [whiteStoneCount, setWhiteStoneCount] = useState(0)
-  const [flag, setFlag] = useState(true)
+  const [skipFlag, setSkipFlag] = useState(true)
   const [message, setMessage] = useState()
   const [winner, setWinner] = useState('')
-  const [count, setCount] = useState(0)
-  const [squaresDom, setSquaresDom] = useReducer(test, [])
-  const [stepNumber, setStepNumber] = useState(0)
+  const [squaresDom, setSquaresDom] = useReducer(getDomReducer, [])
   const [jumpFlag, setJumpFlag] = useState(false)
-  const [notReverseHistory, setNotReverseHistory] = useState({
-    notReverseHistory: [
-      {
-        notReverseSquare: INIT_BOARD,
-      },
-    ],
-  })
-
-  const [reverseIndex, setReverseIndex] = useState([])
-  const [history, setHistory] = useState({
-    history: [
-      {
-        square: INIT_BOARD,
-      },
-    ],
-  })
-
+  const [useWebSocketValue, initialSocket, domEvent, exportFunctions] =
+    useSocketHook(socketRef, location, navigate)
+  console.log('game')
+  initialSocket()
+  domEvent()
   useEffect(() => {
-    socketRef.current = socketIOClient(ENDPOINT, {
-      withCredentials: true,
-    })
-    socketRef.current.on('connect', () => {})
-
-    const roomName = location.state.roomName
-    const playerName = location.state.playerName
-
-    socketRef.current.emit('join-room', {
-      roomName: roomName,
-      playerName: playerName,
-    })
-
-    socketRef.current.on('disconnect', (reason) => {})
-
-    socketRef.current.on('change-mode', (roomObject) => {
-      const stoneColor = roomObject.blackIsNext ? '○' : '●'
-      setMyStoneColor(stoneColor)
-    })
-
-    socketRef.current.on('over-notice', () => {
-      navigate(-1)
-    })
-
-    socketRef.current.on('update-piece', (value) => {
-      setHistory({ history: value.value.history })
-      setNotReverseHistory({
-        notReverseHistory: value.value.notReverseHistory,
-      })
-
-      setStepNumber(value.value.stepNumber)
-      setBlackIsNext(!value.value.blackIsNext)
-      setReverseIndex(value.value.reverseIndex)
-      setCount(count + 1)
-    })
-
-    const element = getDom('.square')
-    for (const elm of element) {
-      elm.addEventListener('transitionend', (event) => {
-        if (/test/.test(event.target.parentNode.className)) {
-          setTimeout(() => {
-            event.target.parentNode.children[1].classList.add('none')
-            event.target.parentNode.classList.add('penis')
-            event.target.parentNode.classList.remove('test')
-            event.target.parentNode.classList.remove('reverse')
-          }, 100)
-        }
-      })
+    const canPutStoneIndexes = []
+    const stone = useWebSocketValue.blackIsNext ? '○' : '●'
+    const stepNumber = useWebSocketValue.stepNumber
+    const boardInfo = useWebSocketValue.boardHistory.body[stepNumber].boardInfo
+    const tmpSquaresDom =
+      squaresDom.length === 0 ? getDom('.square') : squaresDom[stepNumber - 1]
+    for (const dom of tmpSquaresDom) {
+      dom.removeAttribute('id')
     }
-  }, [])
-  useEffect(() => {
-    const arrayIndex = []
-    const stone = blackIsNext ? '○' : '●'
-    const [rowIndex, colIndex, hougaku] = check(
-      history.history[stepNumber].square,
-      stone
+
+    const [canPutStoneRowIndexes, canPutStoneColIndexes, hougaku] =
+      findCanPutStoneIndex(boardInfo, stone)
+    addCanClickId(
+      canPutStoneRowIndexes,
+      canPutStoneColIndexes,
+      canPutStoneIndexes,
+      tmpSquaresDom
     )
-    for (const [index, item] of rowIndex.entries()) {
-      const rowNum = item * 8
-      const colNum = colIndex[index]
-      arrayIndex.push(rowNum + colNum)
-    }
-    if (squaresDom[stepNumber - 1]) {
-      for (const item of arrayIndex) {
-        for (const [index, squareDom] of squaresDom[stepNumber - 1].entries()) {
-          if (index === item) {
-            squareDom.id = 'canClick'
-          }
-        }
-      }
-    } else {
-      const squaresDom = getDom('.square')
-      for (const item of arrayIndex) {
-        for (const [index, squareDom] of squaresDom.entries()) {
-          if (index === item) {
-            squareDom.id = 'canClick'
-          }
-        }
-      }
-    }
-    if (flag === false && arrayIndex.length === 0) {
+
+    if (skipFlag === false && canPutStoneIndexes.length === 0) {
       setWinner(checkWinner(blackStoneCount, whiteStoneCount))
     }
 
-    if (arrayIndex.length === 0 && flag === true) {
-      setFlag(false)
-      setBlackIsNext(!blackIsNext)
+    if (canPutStoneIndexes.length === 0 && skipFlag === true) {
+      setSkipFlag(false)
+      exportFunctions.setBlackIsNext(!useWebSocketValue.blackIsNext)
       setMessage(`${stone}スキップされました`)
     }
-    const stoneCount = checkStoneCount(history.history[stepNumber].square)
+    const stoneCount = checkStoneCount(boardInfo)
     setBlackStoneCount(stoneCount[0])
     setWhiteStoneCount(stoneCount[1])
-    setRowIndex(rowIndex)
-    setColIndex(colIndex)
-    setHougaku(hougaku)
+    tmpCanPutStoneRowIndexes = canPutStoneRowIndexes
+    tmpCanPutStoneColIndexes = canPutStoneColIndexes
+    tmpHougaku = hougaku
     setSquaresDom('.square')
-  }, [blackIsNext])
+  }, [useWebSocketValue.blackIsNext])
 
-  const status = `Next Player is ${blackIsNext ? 'white' : 'black'}`
+  const status = `Next Player is ${
+    useWebSocketValue.blackIsNext ? 'white' : 'black'
+  }`
 
   const handleClick = (event) => {
-    clickFunction(event, myStoneColor)
+    clickFunction(event, useWebSocketValue.myStoneColor)
   }
 
   const clickFunction = (event, myStoneColor) => {
     setMessage('')
-    console.log(history)
 
-    const stone = blackIsNext ? '○' : '●'
-    if (stone !== myStoneColor) {
+    const stone = useWebSocketValue.blackIsNext ? '○' : '●'
+    console.log(useWebSocketValue.isGameStart)
+    if (stone !== myStoneColor || !useWebSocketValue.isGameStart) {
       return
     }
-
-    const slicedHistory = JSON.parse(
-      JSON.stringify(history.history.slice(0, stepNumber + 1))
-    )
-    const notReverseSlicedHistory = JSON.parse(
+    const stepNumber = useWebSocketValue.stepNumber
+    const slicedBoardHistory = JSON.parse(
       JSON.stringify(
-        notReverseHistory.notReverseHistory.slice(0, stepNumber + 1)
+        useWebSocketValue.boardHistory.body.slice(0, stepNumber + 1)
       )
     )
+
     const currant = JSON.parse(
-      JSON.stringify(slicedHistory[slicedHistory.length - 1])
+      JSON.stringify(slicedBoardHistory[slicedBoardHistory.length - 1])
     )
-    const square = JSON.parse(JSON.stringify(currant.square.slice()))
+    const boardInfo = JSON.parse(JSON.stringify(currant.boardInfo.slice()))
     const index = getClickedIndex(event, squaresDom[stepNumber])
     if (isCheckPutStonePlace(index, squaresDom[stepNumber])) {
-      setCount(count + 1)
       setWinner('')
       setJumpFlag(false)
       const clickedRowIndex = Math.floor(index / 8)
       const clickedColIndex = index % 8
-      const [changedSquares, notReverseSquare] = reverseStone(
+      const [changedBoardInfo, notReversedBoardInfo] = reverseStone(
         clickedRowIndex,
         clickedColIndex,
-        hougaku,
-        rowIndex,
-        colIndex,
-        square,
+        tmpHougaku,
+        tmpCanPutStoneRowIndexes,
+        tmpCanPutStoneColIndexes,
+        boardInfo,
         stone
       )
-      const reverseIndexes = addAnimationId(
+      const reverseIndexes = getReverseIndex(
         stone,
-        history.history[stepNumber].square,
-        changedSquares
+        useWebSocketValue.boardHistory.body[stepNumber].boardInfo,
+        changedBoardInfo
       )
+      setSkipFlag(true)
 
-      setHistory({
-        history: slicedHistory.concat([{ square: changedSquares }]),
-      })
-      setNotReverseHistory({
-        notReverseHistory: notReverseSlicedHistory.concat([
-          { notReverseSquare: notReverseSquare },
-        ]),
-      })
-      setReverseIndex(reverseIndexes)
-      setBlackIsNext(!blackIsNext)
-      setFlag(true)
-      setStepNumber(slicedHistory.length)
-      for (const squareDom of squaresDom[stepNumber]) {
-        squareDom.removeAttribute('id')
-      }
-      socketRef.current.emit('abc', {
-        history: slicedHistory.concat([{ square: changedSquares }]),
-        notReverseHistory: notReverseSlicedHistory.concat([
-          { notReverseSquare: notReverseSquare },
-        ]),
+      exportFunctions.setHistoryValue(changedBoardInfo)
+      exportFunctions.setNotReverseHistory(notReversedBoardInfo)
+      exportFunctions.setReverseIndex(reverseIndexes)
+      exportFunctions.setBlackIsNext(!useWebSocketValue.blackIsNext)
+      exportFunctions.setStepNumber(slicedBoardHistory.length)
+      exportFunctions.setPlayer(0)
+      socketRef.current.emit('put-piece', {
+        boardHistory: changedBoardInfo,
+        notReversedBoardHistory: notReversedBoardInfo,
         stepNumber: stepNumber + 1,
-        blackIsNext: blackIsNext,
+        blackIsNext: useWebSocketValue.blackIsNext,
         flag: jumpFlag,
         reverseIndex: reverseIndexes,
-        count: count + 1,
       })
     }
   }
 
-  const jump = () => {
-    const step = stepNumber - 1
-    if (step < 0) {
-      return
-    }
-    // addAnimationId()
-    setJumpFlag(true)
-    setCount(count + 1)
-    if (message !== '') {
-      const step = stepNumber - 2
-      setStepNumber(step)
-      setBlackIsNext(!blackIsNext)
-      setMessage('')
-    } else {
-      setStepNumber(step)
-      setBlackIsNext(stepNumber % 2 === 0)
-      setMessage('')
-    }
-    for (const squareDom of squaresDom[stepNumber]) {
-      squareDom.removeAttribute('id')
-    }
-  }
+  // const jump = () => {
+  //   const step = stepNumber - 1
+  //   if (step < 0) {
+  //     return
+  //   }
+  //   // addAnimationId()
+  //   setJumpFlag(true)
+  //   if (message !== '') {
+  //     const step = stepNumber - 2
+  //     setStepNumber(step)
+  //     setBlackIsNext(!blackIsNext)
+  //     setMessage('')
+  //   } else {
+  //     setStepNumber(step)
+  //     setBlackIsNext(stepNumber % 2 === 0)
+  //     setMessage('')
+  //   }
+  //   for (const squareDom of squaresDom[stepNumber]) {
+  //     squareDom.removeAttribute('id')
+  //   }
+  // }
 
   return (
     <div className="game">
       <div className="game-board">
-        {console.dir(notReverseHistory)}
         <Board
           value={
             jumpFlag
-              ? history.history[stepNumber].square
-              : notReverseHistory.notReverseHistory[stepNumber].notReverseSquare
+              ? useWebSocketValue.boardHistory.body[
+                  useWebSocketValue.stepNumber
+                ].boardInfo
+              : useWebSocketValue.notReversedBoardHistory.body[
+                  useWebSocketValue.stepNumber
+                ].notReversedBoardInfo
           }
           onClick={handleClick}
-          count={count}
-          reverseIndex={reverseIndex}
+          player={useWebSocketValue.player}
+          reverseIndex={useWebSocketValue.reverseIndex}
           flag={jumpFlag}
-          blackIsNext={blackIsNext}
+          blackIsNext={useWebSocketValue.blackIsNext}
         />
       </div>
       <div className="game-info">
@@ -288,7 +195,7 @@ const Game = () => {
         <p>黒の石の数:{blackStoneCount}</p>
         <p>白の石の数:{whiteStoneCount}</p>
         <p>{winner}</p>
-        <button onClick={jump}>待った</button>
+        {/* <button onClick={jump}>待った</button> */}
       </div>
       <div className="box"></div>
     </div>
